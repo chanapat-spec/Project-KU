@@ -138,53 +138,75 @@
   <!-- 2. SCREEN: 8-BIT MAP & GAME WORLD          -->
   <!-- ========================================== -->
   <div id="screen-game" class="hidden w-full max-w-lg md:max-w-xl h-screen flex flex-col relative overflow-hidden">
-    <!-- Game Header (ZEP Quiz Pastel Style) -->
-    <header class="p-2.5 sm:p-3 bg-white/95 backdrop-blur-md border-b border-slate-200/80 flex items-center justify-between z-10 shadow-xs">
-      <!-- Profile & Stats Pill -->
-      <div class="flex items-center gap-1.5 sm:gap-2">
-        <div class="flex items-center gap-2 pl-1.5 pr-2.5 py-1 bg-purple-100/80 border border-purple-200/90 rounded-full shadow-xs">
-          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-xs shadow-xs text-white">
-            🏃
-          </div>
-          <div class="leading-tight">
-            <div id="player-badge" class="text-[11px] font-bold text-slate-900 font-pixel truncate max-w-[80px]">Player</div>
-            <div class="flex items-center gap-1 mt-0.5">
-              <span id="badge-subject" class="text-[9px] bg-white text-purple-700 px-1.5 py-0.2 rounded-full font-bold border border-purple-200">🏐 วอลเลย์</span>
-              <span id="badge-streak" class="text-[9px] bg-orange-100 text-orange-800 px-1.5 py-0.2 rounded-full font-bold border border-orange-200">🔥 1 วัน</span>
+    <!-- Game Header (ZEP Quiz Pastel Style - Responsive for Portrait & Landscape) -->
+    <header class="p-2 sm:p-2.5 bg-white/95 backdrop-blur-md border-b border-slate-200/80 z-10 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
+      <!-- Top Row on Mobile: Profile Pill + XP + Mobile Sound + Mobile Logout (Always 100% visible in portrait!) -->
+      <div class="flex items-center justify-between w-full sm:w-auto gap-2">
+        <!-- Profile & Stats Pill -->
+        <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
+          <div class="flex items-center gap-2 pl-1.5 pr-2.5 py-1 bg-purple-100/80 border border-purple-200/90 rounded-full shadow-xs shrink-0">
+            <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-xs shadow-xs text-white">
+              🏃
             </div>
+            <div class="leading-tight">
+              <div id="player-badge" class="text-[11px] font-bold text-slate-900 font-pixel truncate max-w-[80px]">Player</div>
+              <div class="flex items-center gap-1 mt-0.5">
+                <span id="badge-subject" class="text-[9px] bg-white text-purple-700 px-1.5 py-0.2 rounded-full font-bold border border-purple-200">🏐 วอลเลย์</span>
+                <span id="badge-streak" class="text-[9px] bg-orange-100 text-orange-800 px-1.5 py-0.2 rounded-full font-bold border border-orange-200">🔥 1 วัน</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- XP Pill Badge -->
+          <div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-100/90 border border-amber-300/80 rounded-full shadow-xs shrink-0">
+            <span class="text-xs">⭐</span>
+            <span id="player-xp" class="text-[10px] text-amber-900 font-pixel font-bold">0 XP</span>
           </div>
         </div>
 
-        <!-- XP Pill Badge -->
-        <div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-100/90 border border-amber-300/80 rounded-full shadow-xs">
-          <span class="text-xs">⭐</span>
-          <span id="player-xp" class="text-[10px] text-amber-900 font-pixel font-bold">0 XP</span>
+        <!-- Mobile Right Top: Sound & Red Logout Pill (Guaranteed to NEVER fall off screen in portrait!) -->
+        <div class="flex sm:hidden items-center gap-1.5 shrink-0">
+          <button id="btn-sound-mobile" class="w-7 h-7 flex items-center justify-center bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-full text-xs text-slate-700 shadow-xs transition-all cursor-pointer" title="เปิด/ปิดเสียง">
+            🔊
+          </button>
+          <button id="btn-logout-mobile" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 rounded-full text-[11px] font-bold flex items-center gap-1 shadow-xs transition-all shrink-0 cursor-pointer" title="ออกจากระบบ / สลับชื่อผู้เล่น">
+            <span>🚪</span>
+            <span>ออกจากระบบ</span>
+          </button>
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="flex items-center space-x-1 sm:space-x-1.5">
-        <button id="btn-open-wardrobe" class="px-2.5 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200/90 font-bold text-xs rounded-full shadow-xs flex items-center gap-1 transition-all" title="ตู้เสื้อผ้า">
-          <span class="text-xs">👕</span>
-          <span class="hidden sm:inline text-[10px] font-bold">แต่งตัว</span>
-        </button>
-        <button id="btn-open-health-bmi" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/90 font-bold text-xs rounded-full shadow-xs flex items-center gap-1 transition-all" title="ตรวจสุขภาพ & วัด BMI">
-          <span class="text-xs">🏥</span>
-          <span class="hidden sm:inline text-[10px] font-bold">วัด BMI</span>
-        </button>
-        <button id="btn-open-leaderboard" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/90 font-bold text-xs rounded-full shadow-xs flex items-center gap-1 transition-all" title="อันดับคะแนน">
-          <span class="text-xs">🏆</span>
-          <span class="hidden sm:inline text-[10px] font-bold">อันดับ</span>
-        </button>
-        <button id="btn-sound" class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-full text-xs text-slate-700 shadow-xs transition-all" title="เปิด/ปิดเสียง">
-          🔊
-        </button>
-        <a href="index.html" class="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 rounded-full text-[11px] font-extrabold flex items-center gap-1 shadow-xs transition-all cursor-pointer" title="ออกจากเกมกลับหน้าแรก">
-          <span>🚪</span> ออกจากเกม
-        </a>
-        <button id="btn-logout" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-full text-[11px] font-bold flex items-center gap-1 shadow-xs transition-all cursor-pointer" title="เปลี่ยนผู้เล่น / สลับชื่อ">
-          <span>🔄</span> สลับชื่อ
-        </button>
+      <!-- Action Buttons Row: Wardrobe, BMI, Leaderboard, Home + Desktop Sound & Desktop Logout -->
+      <div class="flex items-center justify-between sm:justify-end gap-1 sm:gap-1.5 w-full sm:w-auto">
+        <div class="flex items-center gap-1 sm:gap-1.5 flex-1 sm:flex-none justify-between sm:justify-start">
+          <button id="btn-open-wardrobe" class="px-2 sm:px-2.5 py-1 sm:py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200/90 font-bold text-[10px] sm:text-xs rounded-full shadow-xs flex items-center gap-1 transition-all shrink-0 cursor-pointer" title="ตู้เสื้อผ้า">
+            <span>👕</span>
+            <span class="text-[10px] sm:text-xs">แต่งตัว</span>
+          </button>
+          <button id="btn-open-health-bmi" class="px-2 sm:px-2.5 py-1 sm:py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/90 font-bold text-[10px] sm:text-xs rounded-full shadow-xs flex items-center gap-1 transition-all shrink-0 cursor-pointer" title="ตรวจสุขภาพ & วัด BMI">
+            <span>🏥</span>
+            <span class="text-[10px] sm:text-xs">วัด BMI</span>
+          </button>
+          <button id="btn-open-leaderboard" class="px-2 sm:px-2.5 py-1 sm:py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/90 font-bold text-[10px] sm:text-xs rounded-full shadow-xs flex items-center gap-1 transition-all shrink-0 cursor-pointer" title="อันดับคะแนน">
+            <span>🏆</span>
+            <span class="text-[10px] sm:text-xs">อันดับ</span>
+          </button>
+          <a href="index.html" class="px-2 sm:px-2.5 py-1 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-full text-[10px] sm:text-xs font-bold flex items-center gap-1 shadow-xs transition-all shrink-0 cursor-pointer" title="กลับหน้าแรก">
+            <span>🏠</span>
+            <span class="text-[10px] sm:text-xs">หน้าแรก</span>
+          </a>
+        </div>
+
+        <!-- Desktop-only Sound & Logout (Visible on sm: and up) -->
+        <div class="hidden sm:flex items-center gap-1.5 shrink-0">
+          <button id="btn-sound" class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-full text-xs text-slate-700 shadow-xs transition-all cursor-pointer" title="เปิด/ปิดเสียง">
+            🔊
+          </button>
+          <button id="btn-logout" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 rounded-full text-xs font-bold flex items-center gap-1 shadow-xs transition-all shrink-0 cursor-pointer" title="ออกจากระบบ / สลับชื่อผู้เล่น">
+            <span>🚪</span>
+            <span>ออกจากระบบ</span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -243,22 +265,22 @@
       <canvas id="pose-canvas" class="cam-canvas"></canvas>
       <div id="cam-border-indicator" class="cam-border border-4 border-yellow-400"></div>
 
-      <!-- Top HUD -->
-      <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-30 pointer-events-none gap-2">
-        <div class="bg-white/95 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl border border-emerald-300 shadow-md flex items-center space-x-2 backdrop-blur">
-          <span class="text-[10px] sm:text-xs font-pixel text-emerald-600">REPS:</span>
-          <span id="cam-reps" class="font-pixel text-lg sm:text-2xl text-slate-900 font-bold">0 / 12</span>
+      <!-- Top HUD (Responsive for narrow mobile screens) -->
+      <div class="absolute top-3 sm:top-4 left-2.5 sm:left-4 right-2.5 sm:right-4 flex items-center justify-between z-30 pointer-events-none gap-1.5 sm:gap-2">
+        <div class="bg-white/95 px-2.5 py-1 sm:px-4 sm:py-2 rounded-2xl border border-emerald-300 shadow-md flex items-center space-x-1.5 sm:space-x-2 backdrop-blur shrink-0">
+          <span class="text-[9px] sm:text-xs font-pixel text-emerald-600">REPS:</span>
+          <span id="cam-reps" class="font-pixel text-base sm:text-2xl text-slate-900 font-bold">0 / 12</span>
         </div>
 
         <!-- Center Big Exit Button (Easy for kids to find) -->
-        <button id="btn-exit-cam" class="pointer-events-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-extrabold text-xs sm:text-sm rounded-full shadow-2xl border-2 border-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all">
-          <span class="text-base">🚪</span>
-          <span>ออกจากเกม</span>
+        <button id="btn-exit-cam" class="pointer-events-auto px-3.5 sm:px-5 py-1.5 sm:py-2.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-extrabold text-xs sm:text-sm rounded-full shadow-2xl border-2 border-white flex items-center gap-1 cursor-pointer active:scale-95 transition-all shrink-0">
+          <span class="text-sm sm:text-base">🚪</span>
+          <span>ออก</span><span class="hidden xs:inline">จากเกม</span>
         </button>
 
-        <div class="bg-white/95 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl border border-amber-300 shadow-md flex items-center space-x-2 backdrop-blur">
-          <span class="text-[10px] sm:text-xs font-pixel text-amber-600">TIME:</span>
-          <span id="cam-timer" class="font-pixel text-lg sm:text-2xl text-amber-600 font-bold">50s</span>
+        <div class="bg-white/95 px-2.5 py-1 sm:px-4 sm:py-2 rounded-2xl border border-amber-300 shadow-md flex items-center space-x-1.5 sm:space-x-2 backdrop-blur shrink-0">
+          <span class="text-[9px] sm:text-xs font-pixel text-amber-600">TIME:</span>
+          <span id="cam-timer" class="font-pixel text-base sm:text-2xl text-amber-600 font-bold">50s</span>
         </div>
       </div>
 

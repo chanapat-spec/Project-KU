@@ -234,25 +234,31 @@ class App {
       });
     }
 
-    // 2. Logout
+    // 2. Logout (Supports both desktop and mobile portrait buttons)
+    const handleLogout = () => {
+      if (confirm("ต้องการออกจากระบบ / เปลี่ยนชื่อผู้เล่นหรือไม่?")) {
+        storage.clearStudent();
+        location.reload();
+      }
+    };
     const btnLogout = document.getElementById("btn-logout");
-    if (btnLogout) {
-      btnLogout.addEventListener("click", () => {
-        if (confirm("ต้องการเปลี่ยนผู้เล่น / ล็อกเอาท์หรือไม่?")) {
-          storage.clearStudent();
-          location.reload();
-        }
-      });
-    }
+    if (btnLogout) btnLogout.addEventListener("click", handleLogout);
+    const btnLogoutMobile = document.getElementById("btn-logout-mobile");
+    if (btnLogoutMobile) btnLogoutMobile.addEventListener("click", handleLogout);
 
-    // 3. Sound Toggle
+    // 3. Sound Toggle (Syncs both desktop and mobile buttons)
+    const handleSoundToggle = () => {
+      sound.isMuted = !sound.isMuted;
+      const icon = sound.isMuted ? "🔇" : "🔊";
+      const btnSound = document.getElementById("btn-sound");
+      if (btnSound) btnSound.textContent = icon;
+      const btnSoundMobile = document.getElementById("btn-sound-mobile");
+      if (btnSoundMobile) btnSoundMobile.textContent = icon;
+    };
     const btnSound = document.getElementById("btn-sound");
-    if (btnSound) {
-      btnSound.addEventListener("click", () => {
-        sound.isMuted = !sound.isMuted;
-        btnSound.textContent = sound.isMuted ? "🔇" : "🔊";
-      });
-    }
+    if (btnSound) btnSound.addEventListener("click", handleSoundToggle);
+    const btnSoundMobile = document.getElementById("btn-sound-mobile");
+    if (btnSoundMobile) btnSoundMobile.addEventListener("click", handleSoundToggle);
 
     // 4. Modal Close Buttons
     document.querySelectorAll(".btn-close-modal").forEach(btn => {
