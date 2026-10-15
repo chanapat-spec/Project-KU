@@ -292,9 +292,57 @@ class App {
     const btnSummaryReturn = document.getElementById("btn-summary-return");
     if (btnSummaryReturn) {
       btnSummaryReturn.addEventListener("click", () => {
+        this.stopClipLooper();
         this.modalSummary.classList.add("hidden");
         this.showScreen("game");
         if (this.gameEngine) this.gameEngine.resume();
+      });
+    }
+
+    // Mini-Clip Controls in Summary Modal
+    const btnToggleClip = document.getElementById("btn-toggle-clip-view");
+    const btnToggleSnap = document.getElementById("btn-toggle-snap-view");
+    const clipScreenBox = document.getElementById("clip-screen-box");
+    const snapScreenBox = document.getElementById("snap-screen-box");
+    const btnClipSpeed = document.getElementById("btn-clip-speed");
+    const labelClipSpeed = document.getElementById("label-clip-speed");
+    const btnClipPlayPause = document.getElementById("btn-clip-playpause");
+    const labelClipPlayPause = document.getElementById("label-clip-playpause");
+
+    if (btnToggleClip && btnToggleSnap) {
+      btnToggleClip.addEventListener("click", () => {
+        btnToggleClip.className = "px-2 py-0.5 rounded-lg bg-purple-600 text-white font-bold cursor-pointer";
+        btnToggleSnap.className = "px-2 py-0.5 rounded-lg bg-slate-800 text-slate-400 font-semibold cursor-pointer";
+        if (clipScreenBox) clipScreenBox.classList.remove("hidden");
+        if (snapScreenBox) snapScreenBox.classList.add("hidden");
+      });
+
+      btnToggleSnap.addEventListener("click", () => {
+        btnToggleSnap.className = "px-2 py-0.5 rounded-lg bg-purple-600 text-white font-bold cursor-pointer";
+        btnToggleClip.className = "px-2 py-0.5 rounded-lg bg-slate-800 text-slate-400 font-semibold cursor-pointer";
+        if (clipScreenBox) clipScreenBox.classList.add("hidden");
+        if (snapScreenBox) snapScreenBox.classList.remove("hidden");
+      });
+    }
+
+    if (btnClipSpeed) {
+      btnClipSpeed.addEventListener("click", () => {
+        const newSpeed = this.clipSpeedMultiplier === 1.0 ? 0.5 : 1.0;
+        if (labelClipSpeed) {
+          labelClipSpeed.textContent = newSpeed === 0.5 ? "🐢 0.5x สโลว์" : "⚡ 1.0x ปกติ";
+        }
+        if (this.currentClipFrames) {
+          this.startClipLooper(this.currentClipFrames, newSpeed);
+        }
+      });
+    }
+
+    if (btnClipPlayPause) {
+      btnClipPlayPause.addEventListener("click", () => {
+        this.isClipPlaying = !this.isClipPlaying;
+        if (labelClipPlayPause) {
+          labelClipPlayPause.textContent = this.isClipPlaying ? "⏸️ หยุด" : "▶️ เล่น";
+        }
       });
     }
 
@@ -465,6 +513,7 @@ class App {
     const btnSummaryToReport = document.getElementById("btn-summary-to-report");
     if (btnSummaryToReport) {
       btnSummaryToReport.addEventListener("click", () => {
+        this.stopClipLooper();
         this.modalSummary.classList.add("hidden");
         this.openFinalReportModal();
       });
@@ -865,6 +914,11 @@ class App {
         sound.playCoin();
         sound.speak(`${result.reps}`);
 
+        // Mark this rep for motion clip ring buffer
+        if (this.poseDetector) {
+          this.poseDetector.markRepCompleted(result);
+        }
+
         if (result.reps >= this.currentExercise.targetReps) {
           this.finishExerciseSession(true);
         }
@@ -905,6 +959,11 @@ class App {
     this.remainingTime = this.currentExercise.timeLimit;
     this.camTimer.textContent = `${this.remainingTime}s`;
 
+    // Start rolling motion clip buffer
+    if (this.poseDetector) {
+      this.poseDetector.startMotionRecording();
+    }
+
     this.gameTimer = setInterval(() => {
       this.remainingTime--;
       this.camTimer.textContent = `${this.remainingTime}s`;
@@ -936,14 +995,17 @@ class App {
     const accuracy = this.postureEvaluator?.getAccuracy() || 100;
     const grade = this.postureEvaluator?.getGrade() || { grade: "A", badge: "ดีมาก!" };
 
-    // Capture Composite Evidence Snapshot
+    // Capture Composite Evidence Snapshot & 1-Rep Mini Clip
     let snapshotDataUrl = null;
+    let clipFrames = null;
     try {
       if (this.poseDetector) {
         snapshotDataUrl = this.poseDetector.captureSnapshot(this.currentStudent, this.currentExercise, grade, reps);
+        clipFrames = this.poseDetector.getBestRepClip();
+        this.poseDetector.stopMotionRecording();
       }
     } catch (e) {
-      console.warn("Snapshot capture failed:", e);
+      console.warn("Snapshot / Clip capture failed:", e);
     }
 
     // Stop vision & camera to preserve battery
@@ -962,7 +1024,8 @@ class App {
       durationSeconds: duration,
       accuracy,
       grade,
-      snapshot: snapshotDataUrl
+      snapshot: snapshotDataUrl,
+      clipFrames: clipFrames
     });
 
     // Reload student to get newly accumulated totalXP
@@ -994,23 +1057,49 @@ class App {
       isGoalAchieved ? "🏐" : "⏱️"
     );
 
-    // Show Evidence Snapshot Preview
+    // Show Evidence Snapshot Preview & Mini-Clip Loop
     const snapContainer = document.getElementById("snapshot-container");
     const snapImg = document.getElementById("summary-snapshot-img");
+    const clipImg = document.getElementById("summary-clip-img");
+    const clipScreenBox = document.getElementById("clip-screen-box");
+    const snapScreenBox = document.getElementById("snap-screen-box");
     const snapDownloadBtn = document.getElementById("btn-download-snapshot");
     const snapCloudStatus = document.getElementById("summary-cloud-status");
+    const btnToggleClip = document.getElementById("btn-toggle-clip-view");
+    const btnToggleSnap = document.getElementById("btn-toggle-snap-view");
 
-    if (snapshotDataUrl && snapContainer && snapImg) {
-      snapImg.src = snapshotDataUrl;
-      if (snapDownloadBtn) {
+    if ((clipFrames && clipFrames.length > 0) || snapshotDataUrl) {
+      if (snapContainer) snapContainer.classList.remove("hidden");
+
+      if (snapshotDataUrl && snapImg) {
+        snapImg.src = snapshotDataUrl;
+      }
+      if (snapDownloadBtn && snapshotDataUrl) {
         snapDownloadBtn.href = snapshotDataUrl;
         snapDownloadBtn.download = `KU_Volley_${this.currentStudent?.room || 'Room'}_No${this.currentStudent?.studentNumber || '0'}_${this.currentExercise.id}.jpg`;
       }
+
+      // If we have a mini-clip, start looping it
+      if (clipFrames && clipFrames.length >= 4) {
+        if (clipScreenBox) clipScreenBox.classList.remove("hidden");
+        if (snapScreenBox) snapScreenBox.classList.add("hidden");
+        if (btnToggleClip) {
+          btnToggleClip.className = "px-2 py-0.5 rounded-lg bg-purple-600 text-white font-bold cursor-pointer";
+        }
+        if (btnToggleSnap) {
+          btnToggleSnap.className = "px-2 py-0.5 rounded-lg bg-slate-800 text-slate-400 font-semibold cursor-pointer";
+        }
+        this.startClipLooper(clipFrames, 1.0);
+      } else {
+        // Fallback to static snapshot
+        if (clipScreenBox) clipScreenBox.classList.add("hidden");
+        if (snapScreenBox) snapScreenBox.classList.remove("hidden");
+      }
+
       if (snapCloudStatus) {
         snapCloudStatus.textContent = supabase.isConfigured() ? "⚡ กำลังอัปโหลดขึ้น Supabase Cloud..." : "💾 บันทึกในเครื่องแล้ว";
         snapCloudStatus.className = "text-[10px] text-yellow-400 mt-1";
       }
-      snapContainer.classList.remove("hidden");
     } else if (snapContainer) {
       snapContainer.classList.add("hidden");
     }
@@ -1037,6 +1126,46 @@ class App {
     }
 
     this.modalSummary.classList.remove("hidden");
+  }
+
+  // ==========================================
+  // MINI-CLIP LOOPER CONTROLLER
+  // ==========================================
+  startClipLooper(frames, speedMultiplier = 1.0) {
+    this.stopClipLooper();
+    if (!frames || frames.length === 0) return;
+
+    this.currentClipFrames = frames;
+    this.clipFrameIndex = 0;
+    this.isClipPlaying = true;
+    this.clipSpeedMultiplier = speedMultiplier;
+
+    const clipImg = document.getElementById("summary-clip-img");
+    const badgeStatus = document.getElementById("badge-clip-status");
+    const playPauseLabel = document.getElementById("label-clip-playpause");
+    if (playPauseLabel) playPauseLabel.textContent = "⏸️ หยุด";
+
+    if (badgeStatus) {
+      badgeStatus.textContent = `LOOP ● ${speedMultiplier.toFixed(1)}x`;
+    }
+
+    const intervalMs = Math.round(125 / speedMultiplier);
+
+    this.clipLoopTimer = setInterval(() => {
+      if (!this.isClipPlaying) return;
+      if (clipImg && this.currentClipFrames && this.currentClipFrames.length > 0) {
+        clipImg.src = this.currentClipFrames[this.clipFrameIndex];
+        this.clipFrameIndex = (this.clipFrameIndex + 1) % this.currentClipFrames.length;
+      }
+    }, intervalMs);
+  }
+
+  stopClipLooper() {
+    if (this.clipLoopTimer) {
+      clearInterval(this.clipLoopTimer);
+      this.clipLoopTimer = null;
+    }
+    this.isClipPlaying = false;
   }
 
   stopActionCamSession() {

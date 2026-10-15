@@ -15,6 +15,14 @@ export class PoseDetector {
     this.lastVideoTime = -1;
     this.animationId = null;
     this.onFrameCallback = null;
+
+    // Motion Clip Ring Buffer (Best Rep Looper)
+    this.isRecordingMotion = false;
+    this.motionRingBuffer = [];
+    this.bestRepClip = null;
+    this.lastMotionSampleTime = 0;
+    this.smallCanvas = null;
+    this.smallCtx = null;
   }
 
   async init(onProgress) {
@@ -101,6 +109,9 @@ export class PoseDetector {
 
           if (landmarks) {
             this.drawRetroSkeleton(landmarks, frameAnalysis?.isFormCorrect ?? true);
+            if (this.isRecordingMotion) {
+              this.recordMotionSample();
+            }
           }
         } catch (e) {
           console.warn("Detection frame error:", e);
@@ -211,4 +222,78 @@ export class PoseDetector {
 
     return snapCanvas.toDataURL("image/jpeg", 0.85);
   }
+
+  // ==========================================
+  // MINI-CLIP 1-REP RING BUFFER (VIDEO-AS-A-GIF)
+  // ==========================================
+  startMotionRecording() {
+    this.isRecordingMotion = true;
+    this.motionRingBuffer = [];
+    this.bestRepClip = null;
+    this.lastMotionSampleTime = 0;
+  }
+
+  stopMotionRecording() {
+    this.isRecordingMotion = false;
+  }
+
+  recordMotionSample() {
+    const now = performance.now();
+    // Sample every ~125ms = 8 fps (smooth motion with minimal memory footprint)
+    if (now - this.lastMotionSampleTime < 125) return;
+    this.lastMotionSampleTime = now;
+
+    if (!this.smallCanvas) {
+      this.smallCanvas = document.createElement("canvas");
+      this.smallCanvas.width = 240;
+      this.smallCanvas.height = 320;
+      this.smallCtx = this.smallCanvas.getContext("2d");
+    }
+
+    if (!this.video || this.video.videoWidth === 0) return;
+
+    const sCtx = this.smallCtx;
+    const w = this.smallCanvas.width;
+    const h = this.smallCanvas.height;
+
+    // Draw mirrored video & skeleton overlay
+    sCtx.save();
+    sCtx.translate(w, 0);
+    sCtx.scale(-1, 1);
+    sCtx.drawImage(this.video, 0, 0, w, h);
+    sCtx.drawImage(this.canvas, 0, 0, w, h);
+    sCtx.restore();
+
+    // Subtle 8-bit frame timestamp indicator
+    sCtx.fillStyle = "rgba(0, 0, 0, 0.45)";
+    sCtx.fillRect(6, h - 22, 60, 16);
+    sCtx.fillStyle = "#48bb78";
+    sCtx.font = "bold 9px monospace";
+    sCtx.fillText("REC ●", 12, h - 10);
+
+    const frameData = this.smallCanvas.toDataURL("image/jpeg", 0.55);
+    this.motionRingBuffer.push(frameData);
+
+    // Keep rolling buffer of last 18 frames (~2.25 seconds of movement)
+    if (this.motionRingBuffer.length > 18) {
+      this.motionRingBuffer.shift();
+    }
+  }
+
+  // Called when a rep is successfully counted or accuracy peak is reached
+  markRepCompleted(grade) {
+    if (this.motionRingBuffer.length >= 6) {
+      // Save a copy of the last ~2 seconds as the student's best rep animation
+      this.bestRepClip = [...this.motionRingBuffer];
+    }
+  }
+
+  // Retrieve the captured 2-second motion loop
+  getBestRepClip() {
+    if (this.bestRepClip && this.bestRepClip.length >= 6) {
+      return this.bestRepClip;
+    }
+    return this.motionRingBuffer && this.motionRingBuffer.length >= 4 ? [...this.motionRingBuffer] : [];
+  }
 }
+

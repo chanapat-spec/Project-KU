@@ -159,7 +159,7 @@ export const storage = {
   },
 
   // Record a completed exercise session
-  saveExerciseResult({ exerciseId, reps, targetReps, xpEarned, durationSeconds, accuracy, grade, snapshot }) {
+  saveExerciseResult({ exerciseId, reps, targetReps, xpEarned, durationSeconds, accuracy, grade, snapshot, clipFrames }) {
     const student = this.getStudent();
     if (!student) return null;
 
@@ -177,11 +177,20 @@ export const storage = {
       accuracy: accuracy || 100,
       grade: grade?.grade || 'A',
       snapshot: snapshot || null,
+      clipFrames: (clipFrames && clipFrames.length > 0) ? clipFrames : null,
       timestamp: new Date().toISOString()
     };
 
     const allRecords = this.getAllScoreRecords();
     allRecords.push(record);
+    
+    // Prune clipFrames from records older than 15 attempts to prevent exceeding localStorage quota
+    if (allRecords.length > 15) {
+      for (let i = 0; i < allRecords.length - 15; i++) {
+        if (allRecords[i].clipFrames) delete allRecords[i].clipFrames;
+      }
+    }
+
     localStorage.setItem(STORAGE_KEYS.STUDENT_SCORES, JSON.stringify(allRecords));
 
     // Update Student Total XP

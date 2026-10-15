@@ -549,17 +549,72 @@ function doPost(e) {
       </div>
     </div>
 
-    <!-- Modal: View Student Snapshot Evidence -->
+    <!-- Modal: View Student Snapshot & Mini-Clip Motion Evidence -->
     <div id="modal-admin-snapshot" class="hidden fixed inset-0 bg-black/85 flex items-center justify-center p-4 z-50">
-      <div class="bg-slate-900 border border-yellow-400 rounded-xl p-4 max-w-lg w-full text-center shadow-2xl">
-        <div class="flex justify-between items-center mb-3">
-          <h3 id="admin-snapshot-title" class="text-sm font-bold text-yellow-300">📸 ภาพถ่ายหลักฐานการฝึกซ้อม</h3>
-          <button id="btn-close-admin-snapshot" class="text-gray-400 hover:text-white font-bold text-lg">✕</button>
+      <div class="bg-slate-900 border-2 border-yellow-400 rounded-2xl p-5 max-w-lg w-full text-center shadow-2xl space-y-3">
+        <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+          <div>
+            <h3 id="admin-snapshot-title" class="text-sm font-bold text-yellow-300 text-left flex items-center gap-1.5">
+              <span>🎬</span> การเคลื่อนไหว & หลักฐานการฝึกซ้อม
+            </h3>
+            <p id="admin-snapshot-subtitle" class="text-[11px] text-slate-400 text-left mt-0.5">-</p>
+          </div>
+          <button id="btn-close-admin-snapshot" class="text-gray-400 hover:text-white font-bold text-xl cursor-pointer">✕</button>
         </div>
-        <img id="admin-snapshot-img" class="w-full max-h-96 object-contain rounded border border-slate-700 bg-black mx-auto" src="" alt="Evidence Snapshot">
-        <div class="mt-3 flex justify-between items-center text-xs">
-          <a id="admin-snapshot-link" target="_blank" class="text-emerald-400 hover:underline">🔗 เปิดดูภาพต้นฉบับในแท็บใหม่</a>
-          <button id="btn-close-admin-snapshot-2" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-gray-200">ปิด</button>
+
+        <!-- Mode Toggle Tabs (when clip is available) -->
+        <div id="admin-media-tabs" class="flex justify-center gap-2 text-xs">
+          <button type="button" id="btn-admin-tab-clip" class="px-3 py-1 rounded-xl bg-purple-600 text-white font-bold cursor-pointer">
+            🎬 มินิคลิป 1 จังหวะ
+          </button>
+          <button type="button" id="btn-admin-tab-snap" class="px-3 py-1 rounded-xl bg-slate-800 text-slate-400 font-semibold cursor-pointer">
+            📸 ภาพนิ่งหลักฐาน
+          </button>
+        </div>
+
+        <!-- Clip Looper Screen Box -->
+        <div id="admin-clip-box" class="relative mx-auto rounded-xl overflow-hidden bg-black max-w-sm aspect-[3/4] flex items-center justify-center border border-purple-500/50 shadow-inner">
+          <img id="admin-clip-img" class="w-full h-full object-contain" alt="Motion Clip Loop">
+          <div id="admin-clip-badge" class="absolute top-2 left-2 px-2 py-0.5 bg-black/80 text-emerald-400 font-mono text-[10px] font-bold rounded-md border border-emerald-500/50">
+            ▶️ LOOP ● 1.0x
+          </div>
+        </div>
+
+        <!-- Static Snapshot Screen Box -->
+        <div id="admin-snap-box" class="hidden relative mx-auto rounded-xl overflow-hidden bg-black max-w-sm aspect-[3/4] items-center justify-center border border-slate-700 shadow-inner">
+          <img id="admin-snapshot-img" class="w-full h-full object-contain" src="" alt="Evidence Snapshot">
+        </div>
+
+        <!-- Scrubber Slider & Motion Controls for Teachers -->
+        <div id="admin-clip-controls" class="p-3 bg-slate-950/80 rounded-xl border border-slate-800 space-y-2 text-xs">
+          <!-- Frame Scrubber -->
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-slate-400 font-bold shrink-0">เลื่อนดูทีละเฟรม:</span>
+            <input type="range" id="admin-clip-scrubber" min="0" max="15" value="0"
+              class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-yellow-400">
+            <span id="admin-clip-frame-num" class="text-[10px] font-mono text-yellow-300 shrink-0 w-8 text-right">0/0</span>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex justify-between items-center pt-1 text-xs">
+            <div class="flex items-center gap-1.5">
+              <button type="button" id="btn-admin-clip-playpause" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-white font-bold text-[11px] rounded-lg cursor-pointer">
+                <span id="label-admin-playpause">⏸️ หยุด</span>
+              </button>
+              <button type="button" id="btn-admin-clip-speed" class="px-2.5 py-1 bg-purple-900/60 hover:bg-purple-800/80 text-purple-200 border border-purple-500/40 font-bold text-[11px] rounded-lg cursor-pointer">
+                <span>⚡</span> <span id="label-admin-speed">1.0x ปกติ</span>
+              </button>
+            </div>
+            <a id="admin-snapshot-link" target="_blank" class="text-emerald-400 hover:underline text-[11px] font-semibold">
+              🔗 เปิดภาพเต็ม
+            </a>
+          </div>
+        </div>
+
+        <div class="flex justify-end pt-1">
+          <button id="btn-close-admin-snapshot-2" class="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs text-gray-200 font-bold cursor-pointer">
+            ปิดหน้าต่าง
+          </button>
         </div>
       </div>
     </div>
@@ -880,24 +935,155 @@ function doPost(e) {
       document.getElementById("supabase-guide-box").classList.toggle("hidden");
     });
 
-    // --- SNAPSHOT VIEWER MODAL ---
+    // --- SNAPSHOT & MINI-CLIP VIEWER MODAL ---
     const modalSnapshot = document.getElementById("modal-admin-snapshot");
     const snapshotImg = document.getElementById("admin-snapshot-img");
+    const clipImg = document.getElementById("admin-clip-img");
+    const clipBox = document.getElementById("admin-clip-box");
+    const snapBox = document.getElementById("admin-snap-box");
+    const clipControls = document.getElementById("admin-clip-controls");
+    const mediaTabs = document.getElementById("admin-media-tabs");
     const snapshotLink = document.getElementById("admin-snapshot-link");
     const snapshotTitle = document.getElementById("admin-snapshot-title");
+    const snapshotSubtitle = document.getElementById("admin-snapshot-subtitle");
+    const scrubber = document.getElementById("admin-clip-scrubber");
+    const scrubberNum = document.getElementById("admin-clip-frame-num");
+    const btnTabClip = document.getElementById("btn-admin-tab-clip");
+    const btnTabSnap = document.getElementById("btn-admin-tab-snap");
+    const btnPlayPause = document.getElementById("btn-admin-clip-playpause");
+    const labelPlayPause = document.getElementById("label-admin-playpause");
+    const btnSpeed = document.getElementById("btn-admin-clip-speed");
+    const labelSpeed = document.getElementById("label-admin-speed");
+    const clipBadge = document.getElementById("admin-clip-badge");
 
-    function openSnapshotModal(src, studentName, info) {
-      if (!src) return;
-      snapshotImg.src = src;
-      snapshotLink.href = src;
-      snapshotTitle.textContent = `📸 หลักฐาน: ${studentName || ''} ${info || ''}`;
+    let adminClipTimer = null;
+    let adminClipFrames = [];
+    let adminClipIndex = 0;
+    let adminIsPlaying = true;
+    let adminSpeed = 1.0;
+
+    function stopAdminClip() {
+      if (adminClipTimer) {
+        clearInterval(adminClipTimer);
+        adminClipTimer = null;
+      }
+      adminIsPlaying = false;
+    }
+
+    function startAdminClip(frames, speed = 1.0) {
+      stopAdminClip();
+      if (!frames || frames.length === 0) return;
+
+      adminClipFrames = frames;
+      adminClipIndex = 0;
+      adminIsPlaying = true;
+      adminSpeed = speed;
+
+      if (labelPlayPause) labelPlayPause.textContent = "⏸️ หยุด";
+      if (clipBadge) clipBadge.textContent = `▶️ LOOP ● ${speed.toFixed(1)}x`;
+      if (scrubber) {
+        scrubber.max = frames.length - 1;
+        scrubber.value = 0;
+      }
+
+      const intervalMs = Math.round(125 / speed);
+      adminClipTimer = setInterval(() => {
+        if (!adminIsPlaying) return;
+        if (clipImg && adminClipFrames.length > 0) {
+          clipImg.src = adminClipFrames[adminClipIndex];
+          if (scrubber) scrubber.value = adminClipIndex;
+          if (scrubberNum) scrubberNum.textContent = `${adminClipIndex + 1}/${adminClipFrames.length}`;
+          adminClipIndex = (adminClipIndex + 1) % adminClipFrames.length;
+        }
+      }, intervalMs);
+    }
+
+    function openSnapshotModal(src, studentName, info, clipFrames) {
+      if (!src && (!clipFrames || clipFrames.length === 0)) return;
+
+      stopAdminClip();
+      if (snapshotImg && src) snapshotImg.src = src;
+      if (snapshotLink && src) snapshotLink.href = src;
+      if (snapshotTitle) snapshotTitle.textContent = `🎬 การเคลื่อนไหว: ${studentName || ''}`;
+      if (snapshotSubtitle) snapshotSubtitle.textContent = `แบบฝึกหัด: ${info || 'ท่าฝึกซ้อม'} | บันทึกการเคลื่อนไหว 1 จังหวะ`;
+
+      const hasClip = clipFrames && clipFrames.length >= 4;
+
+      if (hasClip) {
+        if (mediaTabs) mediaTabs.classList.remove("hidden");
+        if (clipControls) clipControls.classList.remove("hidden");
+        if (clipBox) clipBox.classList.remove("hidden");
+        if (snapBox) snapBox.classList.add("hidden");
+
+        if (btnTabClip) btnTabClip.className = "px-3 py-1 rounded-xl bg-purple-600 text-white font-bold cursor-pointer";
+        if (btnTabSnap) btnTabSnap.className = "px-3 py-1 rounded-xl bg-slate-800 text-slate-400 font-semibold cursor-pointer";
+
+        startAdminClip(clipFrames, 1.0);
+      } else {
+        if (mediaTabs) mediaTabs.classList.add("hidden");
+        if (clipControls) clipControls.classList.add("hidden");
+        if (clipBox) clipBox.classList.add("hidden");
+        if (snapBox) snapBox.classList.remove("hidden");
+      }
+
       modalSnapshot.classList.remove("hidden");
     }
 
+    // Modal Control Event Listeners
+    if (btnTabClip && btnTabSnap) {
+      btnTabClip.addEventListener("click", () => {
+        btnTabClip.className = "px-3 py-1 rounded-xl bg-purple-600 text-white font-bold cursor-pointer";
+        btnTabSnap.className = "px-3 py-1 rounded-xl bg-slate-800 text-slate-400 font-semibold cursor-pointer";
+        if (clipBox) clipBox.classList.remove("hidden");
+        if (snapBox) snapBox.classList.add("hidden");
+        if (clipControls) clipControls.classList.remove("hidden");
+        if (adminClipFrames.length > 0) startAdminClip(adminClipFrames, adminSpeed);
+      });
+
+      btnTabSnap.addEventListener("click", () => {
+        btnTabSnap.className = "px-3 py-1 rounded-xl bg-purple-600 text-white font-bold cursor-pointer";
+        btnTabClip.className = "px-3 py-1 rounded-xl bg-slate-800 text-slate-400 font-semibold cursor-pointer";
+        if (clipBox) clipBox.classList.add("hidden");
+        if (snapBox) snapBox.classList.remove("hidden");
+        if (clipControls) clipControls.classList.add("hidden");
+        stopAdminClip();
+      });
+    }
+
+    if (btnPlayPause) {
+      btnPlayPause.addEventListener("click", () => {
+        adminIsPlaying = !adminIsPlaying;
+        if (labelPlayPause) labelPlayPause.textContent = adminIsPlaying ? "⏸️ หยุด" : "▶️ เล่น";
+      });
+    }
+
+    if (btnSpeed) {
+      btnSpeed.addEventListener("click", () => {
+        const newSpeed = adminSpeed === 1.0 ? 0.5 : 1.0;
+        if (labelSpeed) labelSpeed.textContent = newSpeed === 0.5 ? "🐢 0.5x สโลว์" : "⚡ 1.0x ปกติ";
+        if (adminClipFrames.length > 0) startAdminClip(adminClipFrames, newSpeed);
+      });
+    }
+
+    if (scrubber) {
+      scrubber.addEventListener("input", (e) => {
+        adminIsPlaying = false;
+        if (labelPlayPause) labelPlayPause.textContent = "▶️ เล่น";
+        const idx = parseInt(e.target.value, 10);
+        adminClipIndex = idx;
+        if (clipImg && adminClipFrames[idx]) {
+          clipImg.src = adminClipFrames[idx];
+        }
+        if (scrubberNum) scrubberNum.textContent = `${idx + 1}/${adminClipFrames.length}`;
+      });
+    }
+
     document.getElementById("btn-close-admin-snapshot").addEventListener("click", () => {
+      stopAdminClip();
       modalSnapshot.classList.add("hidden");
     });
     document.getElementById("btn-close-admin-snapshot-2").addEventListener("click", () => {
+      stopAdminClip();
       modalSnapshot.classList.add("hidden");
     });
 
@@ -930,6 +1116,7 @@ function doPost(e) {
               xpEarned: c.xp_earned,
               durationSeconds: c.duration_seconds,
               snapshotUrl: c.snapshot_url,
+              clipFrames: c.clip_frames || null,
               timestamp: c.created_at
             }));
 
@@ -990,9 +1177,11 @@ function doPost(e) {
           : `<span class="text-gray-500 text-[10px]">-</span>`;
 
         const snapSrc = latest?.snapshotUrl || latest?.snapshot;
-        const snapshotButton = snapSrc ? `
-          <button data-snap="${snapSrc}" data-name="${s.name}" data-info="${latest?.exerciseId || ''}" class="btn-view-snapshot px-2 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/50 rounded text-[10px] font-bold inline-flex items-center gap-1 shadow">
-            <span>📷</span> ดูรูป
+        const hasClip = Boolean(latest?.clipFrames && latest.clipFrames.length >= 4);
+
+        const snapshotButton = (snapSrc || hasClip) ? `
+          <button data-student-id="${s.id}" data-snap="${snapSrc || ''}" data-name="${s.name}" data-info="${latest?.exerciseId || ''}" class="btn-view-snapshot px-2.5 py-1 ${hasClip ? 'bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border-purple-500/60' : 'bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 border-yellow-500/50'} border rounded-lg text-[10px] font-bold inline-flex items-center gap-1 shadow cursor-pointer transition-all">
+            <span>${hasClip ? '🎬' : '📷'}</span> ${hasClip ? 'ดูมินิคลิป' : 'ดูรูป'}
           </button>
         ` : `<span class="text-gray-500 text-[10px]">-</span>`;
 
@@ -1027,7 +1216,9 @@ function doPost(e) {
           const src = btn.getAttribute("data-snap");
           const name = btn.getAttribute("data-name");
           const info = btn.getAttribute("data-info");
-          openSnapshotModal(src, name, info);
+          const stId = btn.getAttribute("data-student-id");
+          const stRecord = allRecords.find(r => (r.studentId === stId || r.studentName === name) && r.clipFrames);
+          openSnapshotModal(src, name, info, stRecord?.clipFrames);
         });
       });
 
