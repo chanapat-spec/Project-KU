@@ -1,0 +1,28 @@
+[
+  {
+    "id": "high_knees",
+    "name": "ยกเข่าสูง (High Knees)",
+    "sport": "",
+    "badge": "⚡ ",
+    "icon": "🏃",
+    "description": "วิ่งย่ำเท้ายกเข่าขึ้นสูงระดับสะโพก อุ่นเครื่องต้นขาและกล้ามเนื้อแกนกลาง",
+    "instructions": [
+      "1. ยืนหันหน้าหากล้อง ให้เห็นลำตัวตั้งแต่ศีรษะถึงขา",
+      "2. สลับยกเข่าซ้าย-ขวาขึ้นสูงระดับสะโพก/เอว",
+      "3. แกว่งแขนสลับจังหวะอย่างกระฉับกระเฉง"
+    ],
+    "targetReps": 10,
+    "timeLimit": 40,
+    "pointsPerRep": 15,
+    "requiresFullBody": true,
+    "rules": {
+      "repetition": {
+        "type": "high_knees",
+        "kneeAngleThreshold": 100,
+        "hipAngleThreshold": 110,
+        "cueUp": "ยกเข่าสูงขึ้นอีก!",
+        "cueDown": "สลับข้างต่อเนื่อง!"
+      }
+    }
+  }
+]

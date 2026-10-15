@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>PECLASS Quest - แพลตฟอร์มเกมฝึกทักษะพลศึกษาและวอลเลย์บอล</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Press+Start+2P&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              purple: '#7C3AED',
+              purpleHover: '#6D28D9',
+              purpleLight: '#F5F3FF',
+              orange: '#FF6B00',
+              orangeHover: '#EA580C',
+              orangeLight: '#FFF7ED',
+              sky: '#38BDF8',
+              skyLight: '#F0F9FF',
+              emerald: '#10B981',
+              emeraldLight: '#ECFDF5',
+              dark: '#0F172A',
+            }
+          },
+          fontFamily: {
+            sans: ['Prompt', 'Nunito', 'sans-serif'],
+            pixel: ['"Press Start 2P"', 'monospace'],
+          },
+          borderRadius: {
+            '2xl': '1rem',
+            '3xl': '1.5rem',
+            '4xl': '2rem',
+          },
+          boxShadow: {
+            'soft': '0 4px 20px -2px rgba(124, 58, 237, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
+            'card': '0 10px 30px -4px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(0, 0, 0, 0.03)',
+            'floating': '0 20px 40px -6px rgba(124, 58, 237, 0.15)',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 min-h-screen flex flex-col justify-between items-center selection:bg-purple-600 selection:text-white">
+
+  <!-- ========================================== -->
+  <!-- 1. SCREEN: LOGIN / STUDENT REGISTRATION   -->
+  <!-- ========================================== -->
+  <div id="screen-login" class="w-full max-w-md px-6 py-8 flex flex-col items-center my-auto">
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-gradient-to-tr from-purple-600 to-indigo-500 text-3xl shadow-lg shadow-purple-500/25 mb-3 text-white animate-bounce">
+        🏐
+      </div>
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-bold mb-2">
+        <span class="w-2 h-2 rounded-full bg-purple-600 animate-pulse"></span> 2D Pixel Gym & AI Cam
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">PECLASS <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-orange-500">QUEST</span></h1>
+      <p class="text-xs text-slate-500 mt-1 font-medium">เข้าสู่ห้องเรียนจำลอง 2D Pixel พร้อม AI ตรวจจับท่าทาง</p>
+    </div>
+
+    <div class="pixel-box w-full p-6 sm:p-7 bg-white border border-slate-200/80 rounded-3xl shadow-card">
+      <h3 class="text-sm font-bold text-slate-800 mb-4 text-center flex items-center justify-center gap-2">
+        <span>🎮</span> ข้อมูลนักเรียนเข้าห้องเรียน
+      </h3>
+      <form id="form-login" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">ชื่อ - นามสกุล หรือชื่อเล่น</label>
+          <input type="text" id="input-student-name" required placeholder="เช่น น้องพลอย หรือ ด.ช. วิน"
+            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 focus:outline-none text-sm transition-all">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">เลขที่</label>
+          <input type="number" id="input-student-number" required min="1" max="99" placeholder="เช่น 1, 15, 28"
+            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-purple-700 placeholder-slate-400 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 focus:outline-none text-sm font-bold transition-all">
+        </div>
+
+        <!-- Chosen Subject Indicator (Selected from Landing Page Dropdown) -->
+        <div id="subject-banner-container" class="p-3 bg-purple-50/70 border border-purple-200/80 rounded-2xl flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2.5">
+            <span id="subject-banner-icon" class="text-2xl">🏐</span>
+            <div>
+              <div class="text-[11px] text-slate-500 font-medium">วิชาที่เลือกเข้าเรียน:</div>
+              <div id="subject-banner-name" class="font-bold text-purple-900">วิชาพลศึกษา: วอลเลย์บอล</div>
+            </div>
+          </div>
+          <button type="button" id="btn-toggle-subject-select" class="text-xs text-purple-600 hover:text-purple-800 font-bold underline px-2 py-1 rounded-lg hover:bg-purple-100/60 transition-colors">
+            เปลี่ยนวิชา
+          </button>
+        </div>
+
+        <div id="subject-select-wrapper" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">📚 เลือกวิชาเรียน:</label>
+          <select id="input-subject" class="w-full px-4 py-2.5 bg-purple-50/50 border border-purple-300 rounded-2xl text-purple-900 focus:bg-white focus:border-purple-500 focus:outline-none text-xs sm:text-sm font-semibold">
+            <option value="volleyball">🏐 วิชาพลศึกษา: วอลเลย์บอล (Volleyball)</option>
+            <option value="fitness">🏃 วิชาพลศึกษา: กายบริหาร & คาร์ดิโอ (Cardio & Fitness)</option>
+            <option value="badminton">🏸 วิชาพลศึกษา: แบดมินตัน (Badminton)</option>
+            <option value="basketball">🏀 วิชาพลศึกษา: บาสเกตบอล (Basketball)</option>
+            <option value="football">⚽ วิชาพลศึกษา: ฟุตบอล (Football)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">ห้องเรียน</label>
+          <select id="input-room" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-800 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 focus:outline-none text-sm transition-all">
+            <!-- Dynamically populated (default ห้อง 1-20) -->
+          </select>
+        </div>
+
+        <button type="submit" class="pixel-btn w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold mt-2 rounded-full shadow-lg shadow-purple-600/25">
+          ▶ เข้าสู่ห้องเรียน (START)
+        </button>
+      </form>
+    </div>
+
+    <div class="mt-5 text-center space-y-1.5">
+      <div>
+        <a href="landing.html" class="text-xs text-purple-600 hover:text-purple-700 font-bold hover:underline inline-flex items-center gap-1">
+          ✨ ดูหน้าแนะนำระบบ (Landing Page)
+        </a>
+      </div>
+      <div>
+        <a href="admin/index.html" class="text-xs text-slate-400 hover:text-purple-600 hover:underline">
+          🔑 อาจารย์ผู้สอน: ตรวจคะแนน & จัดการห้องเรียน (Admin Dashboard)
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 2. SCREEN: 8-BIT MAP & GAME WORLD          -->
+  <!-- ========================================== -->
+  <div id="screen-game" class="hidden w-full max-w-lg md:max-w-xl h-screen flex flex-col relative overflow-hidden">
+    <!-- Game Header (ZEP Quiz Pastel Style) -->
+    <header class="p-2.5 sm:p-3 bg-white/95 backdrop-blur-md border-b border-slate-200/80 flex items-center justify-between z-10 shadow-xs">
+      <!-- Profile & Stats Pill -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <div class="flex items-center gap-2 pl-1.5 pr-2.5 py-1 bg-purple-100/80 border border-purple-200/90 rounded-full shadow-xs">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-xs shadow-xs text-white">
+            🏃
+          </div>
+          <div class="leading-tight">
+            <div id="player-badge" class="text-[11px] font-bold text-slate-900 font-pixel truncate max-w-[80px]">Player</div>
+            <div class="flex items-center gap-1 mt-0.5">
+              <span id="badge-subject" class="text-[9px] bg-white text-purple-700 px-1.5 py-0.2 rounded-full font-bold border border-purple-200">🏐 วอลเลย์</span>
+              <span id="badge-streak" class="text-[9px] bg-orange-100 text-orange-800 px-1.5 py-0.2 rounded-full font-bold border border-orange-200">🔥 1 วัน</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- XP Pill Badge -->
+        <div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-100/90 border border-amber-300/80 rounded-full shadow-xs">
+          <span class="text-xs">⭐</span>
+          <span id="player-xp" class="text-[10px] text-amber-900 font-pixel font-bold">0 XP</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-1 sm:space-x-1.5">
+        <button id="btn-open-wardrobe" class="px-2.5 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200/90 font-bold text-xs rounded-full shadow-xs flex items-center gap-1 transition-all" title="ตู้เสื้อผ้า">
+          <span class="text-xs">👕</span>
+          <span class="hidden sm:inline text-[10px] font-bold">แต่งตัว</span>
+        </button>
+        <button id="btn-open-leaderboard" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/90 font-bold text-xs rounded-full shadow-xs flex items-center gap-1 transition-all" title="อันดับคะแนน">
+          <span class="text-xs">🏆</span>
+          <span class="hidden sm:inline text-[10px] font-bold">อันดับ</span>
+        </button>
+        <button id="btn-sound" class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-full text-xs text-slate-700 shadow-xs transition-all" title="เปิด/ปิดเสียง">
+          🔊
+        </button>
+        <button id="btn-logout" class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-red-50 hover:text-red-500 border border-slate-200 text-slate-400 rounded-full text-xs shadow-xs transition-all" title="เปลี่ยนผู้เล่น">
+          🚪
+        </button>
+      </div>
+    </header>
+
+    <!-- Minigame Progress HUD -->
+    <div id="minigame-progress-hud" class="px-3.5 py-2 bg-white/90 border-b border-purple-100/80 flex items-center justify-between z-10 backdrop-blur-sm shadow-xs">
+      <div class="flex items-center gap-1.5 px-3 py-1 bg-purple-50 border border-purple-200 rounded-full shadow-xs">
+        <span class="text-xs">🏐</span>
+        <span class="text-[11px] text-slate-600 font-bold">ภารกิจ:</span>
+        <span id="progress-hud-text" class="text-[11px] text-purple-700 font-pixel font-bold bg-white px-2 py-0.5 rounded-full border border-purple-200">0 / 6 ท่า</span>
+      </div>
+      <button id="btn-open-final-report" class="pixel-btn px-3.5 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-pixel text-[10px] rounded-full shadow-sm flex items-center gap-1.5 transition-all">
+        <span>📝</span> บันทึกคะแนนส่งครู
+      </button>
+    </div>
+
+    <!-- Game Canvas Viewport (Fullscreen / Container-Fit) -->
+    <main class="relative flex-1 w-full h-full overflow-hidden bg-slate-950 flex items-center justify-center">
+      <div class="relative w-full h-full flex items-center justify-center">
+        <canvas id="game-canvas" class="w-full h-full object-contain block max-w-full max-h-full"></canvas>
+        <div class="scanlines absolute inset-0 pointer-events-none opacity-15"></div>
+      </div>
+
+      <!-- Floating Touch Controls Overlay (ZEP Quiz / Mobile Game Style) -->
+      <div class="absolute inset-x-0 bottom-6 px-4 sm:px-6 flex items-end justify-between pointer-events-none z-20">
+        <!-- D-Pad (Bottom-Left) -->
+        <div class="opacity-70 hover:opacity-100 active:opacity-100 transition-opacity duration-200 pointer-events-auto">
+          <div class="dpad-grid">
+            <div></div>
+            <button id="dpad-up" class="dpad-btn font-bold">▲</button>
+            <div></div>
+            <button id="dpad-left" class="dpad-btn font-bold">◀</button>
+            <div class="dpad-btn text-xs bg-slate-800 border-none opacity-30 cursor-default">•</div>
+            <button id="dpad-right" class="dpad-btn font-bold">▶</button>
+            <div></div>
+            <button id="dpad-down" class="dpad-btn font-bold">▼</button>
+            <div></div>
+          </div>
+        </div>
+
+        <!-- Action Button (A - INTERACT) (Bottom-Right) -->
+        <div class="flex flex-col items-center opacity-70 hover:opacity-100 active:opacity-100 transition-opacity duration-200 pointer-events-auto">
+          <button id="btn-action-a" class="action-arcade-btn shadow-2xl">A</button>
+          <span class="text-[10px] text-white/90 drop-shadow mt-1.5 font-pixel tracking-wider font-bold bg-slate-900/60 px-2.5 py-0.5 rounded-full">INTERACT</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 3. SCREEN: FULLSCREEN ACTION CAM MINIGAME  -->
+  <!-- ========================================== -->
+  <div id="screen-minigame" class="hidden fixed inset-0 bg-slate-950 z-50 flex flex-col justify-between">
+    <div class="cam-container flex-1 relative">
+      <video id="webcam-video" class="cam-video" playsinline></video>
+      <canvas id="pose-canvas" class="cam-canvas"></canvas>
+      <div id="cam-border-indicator" class="cam-border border-4 border-yellow-400"></div>
+
+      <!-- Top HUD -->
+      <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-20 pointer-events-none">
+        <div class="bg-white/90 px-4 py-2 rounded-2xl border border-emerald-300 shadow-md flex items-center space-x-2 backdrop-blur">
+          <span class="text-xs font-pixel text-emerald-600">REPS:</span>
+          <span id="cam-reps" class="font-pixel text-xl sm:text-2xl text-slate-900 font-bold">0 / 12</span>
+        </div>
+
+        <div class="bg-white/90 px-4 py-2 rounded-2xl border border-amber-300 shadow-md flex items-center space-x-2 backdrop-blur">
+          <span class="text-xs font-pixel text-amber-600">TIME:</span>
+          <span id="cam-timer" class="font-pixel text-xl sm:text-2xl text-amber-600 font-bold">50s</span>
+        </div>
+      </div>
+
+      <!-- Center Status Guidance -->
+      <div class="absolute top-20 left-4 right-4 flex flex-col items-center pointer-events-none z-20 space-y-2">
+        <div id="cam-status" class="bg-slate-900/80 px-4 py-1.5 rounded-full border border-slate-700 text-xs text-yellow-300 font-semibold shadow-lg text-center backdrop-blur">
+          กำลังเตรียมระบบกล้อง...
+        </div>
+        <div id="cam-feedback" class="bg-white/95 px-5 py-2 rounded-2xl border-2 border-emerald-500 text-emerald-700 font-bold text-sm sm:text-base shadow-xl text-center backdrop-blur animate-pulse">
+          กรุณาถอยห่างจากกล้อง ให้เห็นเต็มตัว
+        </div>
+      </div>
+
+      <!-- Bottom Progress Bar -->
+      <div class="absolute bottom-16 left-6 right-6 z-20 pointer-events-none">
+        <div class="w-full bg-slate-800/80 rounded-full h-3 border border-slate-700 overflow-hidden">
+          <div id="cam-progress-bar" class="bg-emerald-500 h-full transition-all duration-200" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <button id="btn-exit-cam" class="absolute bottom-4 right-4 z-30 px-3.5 py-1.5 bg-rose-600 text-white font-pixel text-[10px] rounded-full shadow hover:bg-rose-500">
+        ✕ ออก
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- MODAL: MISSION BRIEFING + 8-BIT TUTORIAL   -->
+  <!-- ========================================== -->
+  <div id="modal-brief" class="app-modal hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-40">
+    <div class="pixel-box w-full max-w-sm p-6 bg-white border border-slate-200 rounded-3xl shadow-2xl relative max-h-[92vh] overflow-y-auto text-slate-800">
+      <div class="flex justify-between items-start mb-2">
+        <h3 id="brief-title" class="font-pixel text-xs text-purple-700">ภารกิจ</h3>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+
+      <p id="brief-desc" class="text-xs text-slate-600 mb-3 leading-relaxed"></p>
+
+      <!-- 8-Bit Animated Ghost Tutorial Canvas -->
+      <div class="mb-3 flex flex-col items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+        <div class="text-[10px] text-slate-700 font-semibold mb-1 flex items-center gap-1">
+          <span>👀 ท่าทางตัวอย่าง (Animated Demo):</span>
+        </div>
+        <canvas id="tutorial-canvas" width="220" height="120" class="rounded-xl border border-slate-200 bg-slate-900"></canvas>
+      </div>
+
+      <div class="bg-purple-50/70 p-3 rounded-2xl border border-purple-100 mb-3">
+        <h4 class="text-[11px] font-bold text-purple-700 mb-1">📋 กฎการตรวจจับท่าทาง:</h4>
+        <ul id="brief-instructions" class="space-y-1 list-disc list-inside text-xs text-slate-600"></ul>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 mb-4 text-center">
+        <div class="bg-slate-50 p-2 rounded-2xl border border-slate-200">
+          <div class="text-[9px] text-slate-500 font-pixel">เป้าหมาย</div>
+          <div id="brief-target" class="text-xs font-bold text-purple-700">12 ครั้ง</div>
+        </div>
+        <div class="bg-slate-50 p-2 rounded-2xl border border-slate-200">
+          <div class="text-[9px] text-slate-500 font-pixel">เวลา</div>
+          <div id="brief-time" class="text-xs font-bold text-orange-600">50 วินาที</div>
+        </div>
+        <div class="bg-slate-50 p-2 rounded-2xl border border-slate-200">
+          <div class="text-[9px] text-slate-500 font-pixel">รางวัล</div>
+          <div id="brief-reward" class="text-xs font-bold text-emerald-600 font-mono">+5 EXP</div>
+        </div>
+      </div>
+
+      <button id="btn-start-mission" class="pixel-btn w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold rounded-full shadow-lg shadow-purple-600/20">
+        📷 เปิดกล้องเริ่มภารกิจ!
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- MODAL: VICTORY & EVIDENCE SUMMARY          -->
+  <!-- ========================================== -->
+  <div id="modal-summary" class="app-modal hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-40">
+    <div class="pixel-box w-full max-w-sm p-6 bg-white border border-slate-200 rounded-3xl shadow-2xl text-center max-h-[92vh] overflow-y-auto text-slate-800">
+      <div id="summary-stars" class="text-3xl mb-1">⭐⭐⭐</div>
+      <h3 id="summary-title" class="font-pixel text-xs text-purple-700 mb-3">ภารกิจสำเร็จ!</h3>
+
+      <!-- Accuracy & Grade Card -->
+      <div class="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-200 mb-3 text-center">
+        <div>
+          <div class="text-[10px] text-slate-500 font-medium">จำนวนครั้ง</div>
+          <div id="summary-reps" class="font-bold text-slate-800 text-sm">12 ครั้ง</div>
+        </div>
+        <div>
+          <div class="text-[10px] text-slate-500 font-medium">ความเป๊ะ</div>
+          <div id="summary-accuracy" class="font-bold text-emerald-600 text-sm">92%</div>
+        </div>
+        <div>
+          <div class="text-[10px] text-slate-500 font-medium">เกรด</div>
+          <div id="summary-grade" class="font-bold text-amber-500 text-sm">A+</div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center bg-purple-50/60 px-3.5 py-2 rounded-2xl border border-purple-100 text-xs mb-2">
+        <span class="text-slate-600 font-medium">คะแนน XP รอบนี้:</span>
+        <span id="summary-xp" class="font-bold text-purple-700 text-sm">+240 XP</span>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 px-3.5 py-2 rounded-2xl text-xs mb-3 flex justify-between items-center">
+        <span class="text-amber-800 text-[11px] font-semibold">⭐ คะแนนสะสมรวมทั้งหมด:</span>
+        <span id="summary-total-accum-xp" class="font-bold text-amber-600 font-pixel text-xs">240 XP</span>
+      </div>
+
+      <!-- Evidence Snapshot Image -->
+      <div id="snapshot-container" class="hidden mb-3 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+        <img id="summary-snapshot-img" class="w-full max-h-36 object-contain rounded-xl border border-slate-200 shadow-sm">
+        <div id="summary-cloud-status" class="text-[10px] text-slate-500 mt-1">⚡ กำลังซิงค์ข้อมูล...</div>
+        <a id="btn-download-snapshot" download="KU_Volley_Homework.jpg" class="inline-block mt-1 text-xs text-purple-600 hover:text-purple-700 underline font-semibold">
+          📸 บันทึกรูปการบ้านส่งครู
+        </a>
+      </div>
+
+      <div class="space-y-2 mt-4">
+        <button id="btn-summary-to-report" class="pixel-btn w-full py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white text-xs font-bold rounded-full shadow-md flex items-center justify-center gap-1.5">
+          <span>📝</span> ดูใบสรุปผล & บันทึกคะแนนรวมส่งครู
+        </button>
+        <button id="btn-summary-return" class="pixel-btn w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-full">
+          กลับสู่แผนที่ยิม 🏆
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- MODAL: FINAL REPORT & ALL MINIGAMES SUBMIT -->
+  <!-- ========================================== -->
+  <div id="modal-final-report" class="app-modal hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="pixel-box w-full max-w-md p-6 bg-white border border-slate-200 rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto text-center text-slate-800">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="font-pixel text-xs text-purple-700 flex items-center gap-1.5">
+          <span>🏅</span> ใบสรุปผลการทดสอบวอลเลย์บอล & พลศึกษา
+        </h3>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+
+      <!-- Student Card -->
+      <div class="bg-purple-50/70 p-3.5 rounded-2xl border border-purple-100 mb-3 text-left flex justify-between items-center">
+        <div>
+          <div id="report-student-name" class="font-bold text-sm text-slate-900">Player</div>
+          <div id="report-student-info" class="text-xs text-slate-500">ห้อง 1 • เลขที่ 1</div>
+        </div>
+        <div class="text-right">
+          <div class="text-[10px] text-slate-500">คะแนนสะสมรวม</div>
+          <div id="report-total-xp" class="text-base font-bold text-purple-700 font-pixel">0 XP</div>
+        </div>
+      </div>
+
+      <!-- Exercises Breakdown Table -->
+      <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 mb-3">
+        <div class="text-xs font-bold text-slate-800 mb-2.5 flex items-center justify-between">
+          <span>📋 ผลการประเมินแต่ละมินิเกม</span>
+          <span id="report-progress-badge" class="text-[10px] px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-purple-700 font-bold">ทำแล้ว 0/4 ท่า</span>
+        </div>
+        <div id="report-exercises-list" class="space-y-2 text-xs text-left">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Teacher Approval & Overall Grade Banner -->
+      <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-3 rounded-2xl border border-emerald-200 mb-4 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">🧢</span>
+          <div class="text-left">
+            <div class="text-xs font-bold text-emerald-800">ครูซูน รับรองผลการทดสอบ</div>
+            <div id="report-overall-verdict" class="text-[10px] text-slate-600">มีพัฒนาการที่ดีมาก! ขยันฝึกซ้อมสม่ำเสมอ</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-[10px] text-slate-500">เกรดเฉลี่ยรวม</div>
+          <div id="report-overall-grade" class="text-lg font-bold text-amber-500 font-pixel">A</div>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <button id="btn-confirm-final-submit" class="pixel-btn w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/25 rounded-full">
+          <span>💾</span> บันทึกและส่งผลคะแนนรวมให้ครูซูน!
+        </button>
+        <button class="btn-close-modal pixel-btn w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-full">
+          🎮 ฝึกซ้อมต่อเพื่อสะสมคะแนนเพิ่ม
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- RETRO NOTIFICATION TOAST (NOTI แจ้งเตือน)   -->
+  <!-- ========================================== -->
+  <div id="app-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 opacity-0 -translate-y-4">
+    <div class="pixel-box bg-white/95 border border-purple-200 px-5 py-3 rounded-2xl shadow-floating flex items-center gap-3 backdrop-blur max-w-sm text-slate-800">
+      <span id="toast-icon" class="text-2xl animate-bounce">🎉</span>
+      <div class="text-left">
+        <div id="toast-title" class="font-pixel text-xs text-purple-700 font-bold">ภารกิจสำเร็จ!</div>
+        <div id="toast-desc" class="text-[11px] text-slate-600 mt-0.5">ได้รับ +180 XP (สะสมรวม: 360 XP)</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- MODAL: STRETCHING EXERCISE SELECTION (10 ท่า) -->
+  <!-- ========================================== -->
+  <div id="modal-stretching-select" class="app-modal hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-40">
+    <div class="pixel-box w-full max-w-md p-6 bg-white border border-emerald-200 rounded-3xl shadow-2xl text-slate-800">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-pixel text-xs text-emerald-700 flex items-center gap-1.5 font-bold">
+          <span class="text-base">🧘</span> ท่ายืดเหยียดกล้ามเนื้อ (Stretching 10 ท่า)
+        </h3>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div class="flex items-center justify-between mb-3 text-[11px] text-slate-500 bg-emerald-50/80 p-2 rounded-xl border border-emerald-100">
+        <span>เลือกท่ายืดเหยียดเพื่อคลายกล้ามเนื้อ</span>
+        <span class="font-bold text-emerald-700 bg-white px-2 py-0.5 rounded-full border border-emerald-200 font-mono">⭐ +5 EXP ทุกท่า</span>
+      </div>
+      <div id="stretching-options-list" class="space-y-2 mb-4 max-h-72 overflow-y-auto pr-1">
+        <!-- Dynamically rendered by JS -->
+      </div>
+      <button class="btn-close-modal pixel-btn w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-full transition-all">
+        กลับสู่สนามยิม
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- MODAL: DYNAMIC WARM-UP SELECTION (10 ท่า)   -->
+  <!-- ========================================== -->
+  <div id="modal-warmup-select" class="app-modal hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-40">
+    <div class="pixel-box w-full max-w-md p-6 bg-white border border-amber-200 rounded-3xl shadow-2xl text-slate-800">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-pixel text-xs text-amber-700 flex items-center gap-1.5 font-bold">
+          <span class="text-base">🔥</span> ท่าอบอุ่นร่างกาย Dynamic Warm-up (10 ท่า)
+        </h3>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div class="flex items-center justify-between mb-3 text-[11px] text-slate-500 bg-amber-50/80 p-2 rounded-xl border border-amber-100">
+        <span>เลือกท่า Dynamic Stretching ปลุกพลังความกระฉับกระเฉง</span>
+        <span class="font-bold text-amber-700 bg-white px-2 py-0.5 rounded-full border border-amber-200 font-mono">⭐ +5 EXP ทุกท่า</span>
+      </div>
+      <div id="warmup-options-list" class="space-y-2 mb-4 max-h-72 overflow-y-auto pr-1">
+        <!-- Dynamically rendered by JS -->
+      </div>
+      <button class="btn-close-modal pixel-btn w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-full transition-all">
+        กลับสู่สนามยิม
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- MODAL: WARDROBE & SKINS SHOP (แต่งตัว)     -->
+  <!-- ========================================== -->
+  <div id="modal-wardrobe" class="app-modal hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-40">
+    <div class="pixel-box w-full max-w-sm p-6 bg-white border border-slate-200 rounded-3xl shadow-2xl max-h-[85vh] overflow-y-auto text-slate-800">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="font-pixel text-xs text-purple-700 flex items-center gap-1.5">
+          <span>👕</span> ห้องแต่งตัวนักกีฬา (Wardrobe)
+        </h3>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <!-- Jersey Color Selection -->
+        <div>
+          <label class="block text-slate-700 font-bold mb-2">สีเสื้อทีม (Team Jersey):</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="btn-skin-jersey p-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all" data-color="#006837">
+              <span class="w-4 h-4 rounded-full bg-[#006837] shadow-xs"></span>
+              <span class="font-medium text-slate-800">เขียว KU (ฟรี)</span>
+            </button>
+            <button class="btn-skin-jersey p-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all" data-color="#e53e3e">
+              <span class="w-4 h-4 rounded-full bg-[#e53e3e] shadow-xs"></span>
+              <span class="font-medium text-slate-800">แดงไฟเออร์</span>
+            </button>
+            <button class="btn-skin-jersey p-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all" data-color="#3182ce">
+              <span class="w-4 h-4 rounded-full bg-[#3182ce] shadow-xs"></span>
+              <span class="font-medium text-slate-800">น้ำเงินโอเชี่ยน</span>
+            </button>
+            <button class="btn-skin-jersey p-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all" data-color="#ecc94b">
+              <span class="w-4 h-4 rounded-full bg-[#ecc94b] shadow-xs"></span>
+              <span class="font-medium text-slate-800">ทองแชมเปี้ยน ⭐</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Accessories -->
+        <div>
+          <label class="block text-slate-700 font-bold mb-2">ไอเทมเสริม (Accessories):</label>
+          <div class="space-y-2">
+            <label class="flex items-center justify-between p-2.5 bg-slate-50 rounded-2xl border border-slate-200 hover:border-purple-300 cursor-pointer transition-all">
+              <span class="flex items-center gap-2 font-medium text-slate-800">
+                <span>🛡️</span> สนับเข่าเรโทร (Kneepads)
+              </span>
+              <input type="checkbox" id="check-kneepads" class="rounded w-4 h-4 text-purple-600 focus:ring-purple-500">
+            </label>
+
+            <label class="flex items-center justify-between p-2.5 bg-slate-50 rounded-2xl border border-slate-200 hover:border-purple-300 cursor-pointer transition-all">
+              <span class="flex items-center gap-2 font-medium text-slate-800">
+                <span>🏐</span> สัตว์เลี้ยง: ลูกวอลเลย์บอลติดปีก!
+              </span>
+              <input type="checkbox" id="check-pet" class="rounded w-4 h-4 text-purple-600 focus:ring-purple-500">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-close-modal pixel-btn w-full py-3 bg-purple-600 hover:bg-purple-500 text-white text-xs mt-5 rounded-full shadow-md">
+        เสร็จสิ้นการแต่งตัว
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- MODAL: COACH SOON DIALOG                   -->
+  <!-- ========================================== -->
+  <div id="modal-dialog" class="app-modal hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-40">
+    <div class="pixel-box w-full max-w-sm p-6 bg-white border border-slate-200 rounded-3xl shadow-2xl text-slate-800">
+      <div class="flex items-center space-x-2.5 mb-3">
+        <span class="text-3xl">🧢</span>
+        <h3 class="font-pixel text-xs text-purple-700">ครูซูน (Teacher Soon)</h3>
+      </div>
+      <div id="dialog-content" class="text-xs text-slate-600 mb-4 leading-relaxed bg-purple-50/50 p-3 rounded-2xl border border-purple-100"></div>
+      <button class="btn-close-modal pixel-btn w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-full">
+        เข้าใจแล้วครับครูซูน!
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- MODAL: LEADERBOARD                         -->
+  <!-- ========================================== -->
+  <div id="modal-leaderboard" class="app-modal hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-40">
+    <div class="pixel-box w-full max-w-md p-6 bg-white border border-slate-200 rounded-3xl shadow-2xl max-h-[85vh] flex flex-col text-slate-800">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="font-pixel text-xs text-purple-700 flex items-center gap-2">
+          <span>🏆</span> อันดับคะแนนประจำห้องเรียน
+        </h3>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+
+      <div class="overflow-y-auto flex-1 mb-4 border border-slate-200 rounded-2xl">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 text-slate-500 font-bold sticky top-0 border-b border-slate-200">
+            <tr>
+              <th class="p-2.5 text-center">อันดับ</th>
+              <th class="p-2.5">ชื่อ</th>
+              <th class="p-2.5 text-center">ห้อง</th>
+              <th class="p-2.5 text-center">เลขที่</th>
+              <th class="p-2.5 text-right">XP</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-tbody" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+
+      <button class="btn-close-modal pixel-btn w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-full">
+        ปิดหน้าต่าง
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
