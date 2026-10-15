@@ -127,6 +127,52 @@ end
 
 server.mount('/api/custom-exercises', CustomExercisesServlet)
 
+HEALTH_FILE = File.join(Dir.pwd, 'health_records.json')
+
+class HealthRecordsServlet < WEBrick::HTTPServlet::AbstractServlet
+  def do_GET(req, res)
+    res['Content-Type'] = 'application/json'
+    res['Access-Control-Allow-Origin'] = '*'
+    if File.exist?(HEALTH_FILE)
+      res.body = File.read(HEALTH_FILE)
+    else
+      res.body = [].to_json
+    end
+  end
+
+  def do_POST(req, res)
+    res['Content-Type'] = 'application/json'
+    res['Access-Control-Allow-Origin'] = '*'
+    begin
+      data = JSON.parse(req.body)
+      existing = []
+      existing = JSON.parse(File.read(HEALTH_FILE)) if File.exist?(HEALTH_FILE)
+      
+      idx = existing.find_index { |r| (r['studentId'] && r['studentId'] == data['studentId']) || (r['id'] && r['id'] == data['id']) }
+      if idx
+        existing[idx] = existing[idx].merge(data)
+      else
+        existing.unshift(data)
+      end
+
+      File.write(HEALTH_FILE, JSON.pretty_generate(existing))
+      res.body = { status: 'ok', record: data }.to_json
+    rescue => e
+      res.status = 400
+      res.body = { error: e.message }.to_json
+    end
+  end
+
+  def do_OPTIONS(req, res)
+    res['Access-Control-Allow-Origin'] = '*'
+    res['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    res['Access-Control-Allow-Headers'] = 'Content-Type'
+    res.status = 200
+  end
+end
+
+server.mount('/api/health-records', HealthRecordsServlet)
+
 trap('INT') { server.shutdown }
 
 puts "=" * 55

@@ -613,10 +613,80 @@ export const storage = {
     }
     localStorage.setItem(STORAGE_KEYS.HEALTH_RECORDS, JSON.stringify(all));
 
-    // Submit to Google Sheets Cloud (Sheet 2)
+    // 1. Auto-sync to Supabase Cloud
+    let supabasePromise = null;
+    if (supabase.isConfigured()) {
+      supabasePromise = supabase.upsertHealthRecord(record);
+    }
+
+    // 2. Auto-sync to Local Server (for offline local WiFi testing)
+    this.syncHealthRecordToServer(record);
+
+    // 3. Submit to Google Sheets Cloud (Sheet 2)
     this.submitHealthRecordToCloud(record);
 
+    record.supabasePromise = supabasePromise;
     return record;
+  },
+
+  async syncHealthRecordToServer(record) {
+    try {
+      await fetch("/api/health-records", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(record)
+      });
+    } catch (e) {
+      // offline / standalone
+    }
+  },
+
+  async syncHealthRecordsFromSupabase(roomFilter = "ALL") {
+    let cloudRecords = null;
+
+    // 1. Try Supabase Cloud
+    if (supabase.isConfigured()) {
+      try {
+        cloudRecords = await supabase.fetchAllHealthRecords(roomFilter);
+      } catch (err) {
+        console.warn("Supabase health sync error:", err);
+      }
+    }
+
+    // 2. Try Local Server fallback if Supabase returned nothing
+    if (!cloudRecords || cloudRecords.length === 0) {
+      try {
+        const res = await fetch("/api/health-records");
+        if (res.ok) {
+          const srv = await res.json();
+          if (Array.isArray(srv) && srv.length > 0) {
+            cloudRecords = srv;
+          }
+        }
+      } catch (e) {}
+    }
+
+    // 3. If online/cloud records exist, merge and update local cache
+    if (cloudRecords && Array.isArray(cloudRecords) && cloudRecords.length > 0) {
+      const localRecords = this.getAllHealthRecords();
+      // Filter out demo seeded records if we have real student records
+      const isSeeded = (id) => ["ด.ญ. พลอย", "ด.ช. วิน", "ด.ช. เบส", "ด.ญ. มายด์"].some(n => id?.includes(n));
+      const cleanLocal = localRecords.filter(r => !isSeeded(r.id));
+
+      const mergedMap = new Map();
+      cleanLocal.forEach(r => mergedMap.set(r.studentId, r));
+      cloudRecords.forEach(r => mergedMap.set(r.studentId, r));
+      const mergedList = Array.from(mergedMap.values());
+
+      // If we have any real student records, save them and remove seeders
+      if (mergedList.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.HEALTH_RECORDS, JSON.stringify(mergedList));
+        return roomFilter === "ALL" ? mergedList : mergedList.filter(r => r.room === roomFilter);
+      }
+    }
+
+    const currentLocal = this.getAllHealthRecords();
+    return roomFilter === "ALL" ? currentLocal : currentLocal.filter(r => r.room === roomFilter);
   },
 
   async submitHealthRecordToCloud(record) {

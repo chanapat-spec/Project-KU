@@ -43,11 +43,36 @@ create index if not exists idx_scores_room on public.scores(room);
 create index if not exists idx_scores_created_at on public.scores(created_at desc);
 
 -- ====================================================================
--- 3. ระบบความปลอดภัย Row Level Security (RLS) ตาม Best Practices
+-- 3. ตารางบันทึกข้อมูลสุขภาพ & BMI (Health & BMI Records)
+-- ====================================================================
+create table if not exists public.health_records (
+    id text primary key,
+    student_id text not null,
+    name text not null,
+    student_number text not null,
+    room text not null,
+    gender text default 'male',
+    age integer default 10,
+    weight numeric not null,
+    height numeric not null,
+    bmi numeric not null,
+    classification text not null,
+    created_at timestamptz default now(),
+    updated_at timestamptz default now()
+);
+
+-- ดัชนีค้นหาข้อมูลสุขภาพ
+create index if not exists idx_health_records_room on public.health_records(room);
+create index if not exists idx_health_records_student_id on public.health_records(student_id);
+create index if not exists idx_health_records_updated_at on public.health_records(updated_at desc);
+
+-- ====================================================================
+-- 4. ระบบความปลอดภัย Row Level Security (RLS) ตาม Best Practices
 -- ====================================================================
 
 alter table public.students enable row level security;
 alter table public.scores enable row level security;
+alter table public.health_records enable row level security;
 
 -- สิทธิ์การอ่าน/เขียน สำหรับหน้านักเรียนและหน้าอาจารย์ (Anon Key)
 drop policy if exists "Allow public read students" on public.students;
@@ -66,8 +91,16 @@ drop policy if exists "Allow public insert scores" on public.scores;
 create policy "Allow public insert scores"
 on public.scores for insert to anon, authenticated with check (true);
 
+drop policy if exists "Allow public read health_records" on public.health_records;
+create policy "Allow public read health_records"
+on public.health_records for select to anon, authenticated using (true);
+
+drop policy if exists "Allow public upsert health_records" on public.health_records;
+create policy "Allow public upsert health_records"
+on public.health_records for all to anon, authenticated using (true) with check (true);
+
 -- ====================================================================
--- 4. ถังเก็บไฟล์ภาพถ่ายหลักฐาน (Supabase Storage Bucket)
+-- 5. ถังเก็บไฟล์ภาพถ่ายหลักฐาน (Supabase Storage Bucket)
 -- ====================================================================
 
 insert into storage.buckets (id, name, public)
@@ -85,8 +118,9 @@ on storage.objects for insert to anon, authenticated
 with check (bucket_id = 'homework-snapshots');
 
 -- ====================================================================
--- 5. เปิดใช้งาน Realtime สำหรับแสดง Leaderboard สดในเกม
+-- 6. เปิดใช้งาน Realtime สำหรับแสดง Leaderboard และข้อมูลสุขภาพสด
 -- ====================================================================
 
 alter publication supabase_realtime add table public.students;
 alter publication supabase_realtime add table public.scores;
+alter publication supabase_realtime add table public.health_records;

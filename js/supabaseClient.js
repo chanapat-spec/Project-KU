@@ -299,7 +299,95 @@ class SupabaseManager {
     }
   }
 
-  // Realtime subscription for live leaderboard & score updates
+  // Upsert Health & BMI Record in Supabase
+  async upsertHealthRecord(healthData) {
+    if (!this.client) await this.initClient();
+    if (!this.client) return null;
+
+    try {
+      const payload = {
+        id: healthData.studentId || `${healthData.room}_${healthData.studentNumber}_${healthData.name}`,
+        student_id: healthData.studentId || `${healthData.room}_${healthData.studentNumber}_${healthData.name}`,
+        name: healthData.name,
+        student_number: String(healthData.studentNumber || ''),
+        room: healthData.room || 'ห้อง 1',
+        gender: healthData.gender || 'male',
+        age: parseInt(healthData.age, 10) || 10,
+        weight: parseFloat(healthData.weight) || 0,
+        height: parseFloat(healthData.height) || 0,
+        bmi: parseFloat(healthData.bmi) || 0,
+        classification: healthData.classification || '',
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await this.client
+        .from("health_records")
+        .upsert(payload, { onConflict: "id" })
+        .select()
+        .single();
+
+      if (error) {
+        if (error.code === '42P01' || error.message?.includes("health_records")) {
+          console.warn("⚠️ Supabase health_records table not found. Please run the SQL schema in Supabase SQL editor.");
+        } else {
+          console.warn("Supabase upsertHealthRecord error:", error);
+        }
+        return null;
+      }
+
+      console.log("🏥 Successfully synced Health & BMI record to Supabase!", data);
+      return data;
+    } catch (err) {
+      console.warn("Supabase upsertHealthRecord exception:", err);
+      return null;
+    }
+  }
+
+  // Fetch all health records for Admin Dashboard
+  async fetchAllHealthRecords(roomFilter = "ALL") {
+    if (!this.client) await this.initClient();
+    if (!this.client) return null;
+
+    try {
+      let query = this.client
+        .from("health_records")
+        .select("*")
+        .order("updated_at", { ascending: false });
+
+      if (roomFilter && roomFilter !== "ALL") {
+        query = query.eq("room", roomFilter);
+      }
+
+      const { data, error } = await query;
+      if (error) {
+        if (error.code === '42P01' || error.message?.includes("health_records")) {
+          console.warn("⚠️ Supabase health_records table does not exist yet.");
+          return null;
+        }
+        throw error;
+      }
+
+      return (data || []).map(r => ({
+        id: r.id,
+        studentId: r.student_id || r.id,
+        name: r.name,
+        studentNumber: r.student_number,
+        room: r.room,
+        gender: r.gender,
+        age: r.age,
+        weight: r.weight,
+        height: r.height,
+        bmi: r.bmi,
+        classification: r.classification,
+        timestamp: new Date(r.updated_at || r.created_at || Date.now()).toLocaleString("th-TH")
+      }));
+    } catch (err) {
+      console.warn("Supabase fetchAllHealthRecords error:", err);
+      return null;
+    }
+  }
+
+  // Realtime subscription for live leaderboard, score updates & health records
   subscribeToLeaderboard(onUpdate) {
     if (!this.client) return;
 
@@ -322,6 +410,14 @@ class SupabaseManager {
         { event: "*", schema: "public", table: "scores" },
         (payload) => {
           console.log("⚡ Realtime scores update received!", payload);
+          if (onUpdate) onUpdate(payload);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "health_records" },
+        (payload) => {
+          console.log("⚡ Realtime health_records update received!", payload);
           if (onUpdate) onUpdate(payload);
         }
       )
