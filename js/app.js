@@ -377,6 +377,41 @@ class App {
         document.getElementById("modal-health-bmi").classList.add("hidden");
         if (this.gameEngine) this.gameEngine.resume();
       });
+
+      // Quick Test Sheet Button inside Game Health Modal
+      const btnGameTestSheet = document.getElementById("btn-game-test-sheet");
+      if (btnGameTestSheet) {
+        btnGameTestSheet.addEventListener("click", async () => {
+          const student = storage.getStudent() || { name: "นักเรียนทดสอบ (Game Test)", studentNumber: "99", room: "ห้อง 1" };
+          const webhookUrl = storage.getCloudWebhook();
+          
+          if (!webhookUrl) {
+            alert("⚠️ ยังไม่ได้ตั้งค่า Webhook URL ในระบบ กรุณาให้อาจารย์ใส่ URL ในหน้า Admin Dashboard ก่อนครับ");
+            return;
+          }
+
+          this.showNotificationToast("⏳ กำลังส่งข้อมูล...", "กำลังส่งข้อมูลทดสอบไปยัง Google Sheets...", "☁️");
+
+          const testHealth = {
+            name: (student.name || "นักเรียนทดสอบ") + " [เทส]",
+            studentNumber: student.studentNumber || "99",
+            room: student.room || "ห้อง 1",
+            gender: "male",
+            age: 10,
+            weight: 35.0,
+            height: 140.0
+          };
+
+          storage.saveHealthRecord(testHealth);
+          sound.playCoin();
+          
+          this.showNotificationToast(
+            "🚀 ส่งข้อมูลทดสอบเรียบร้อย!",
+            `ส่งข้อมูลสุขภาพของ "${testHealth.name}" ไปยัง Google Sheets (แผ่นที่ 2) แล้ว! กรุณาเปิดดูในชีต`,
+            "✅"
+          );
+        });
+      }
     }
 
     // 10. Wardrobe Item Buttons
