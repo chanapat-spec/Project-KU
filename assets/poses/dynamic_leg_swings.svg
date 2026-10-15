@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFFBEB"/><stop offset="100%" stop-color="#FEF3C7"/></linearGradient></defs>
+  <style>.swing { animation: legSw 1.4s ease-in-out infinite alternate; transform-origin: 94px 128px; } @keyframes legSw { 0%{transform: rotate(-24deg);} 100%{transform: rotate(26deg);} }</style>
+  <rect width="200" height="200" rx="24" fill="url(#bg)" stroke="#F59E0B" stroke-width="2"/>
+  <rect x="15" y="15" width="170" height="26" rx="13" fill="#B45309"/>
+  <text x="100" y="32" fill="#FFFFFF" font-family="sans-serif" font-size="10.5" font-weight="bold" text-anchor="middle">🔥 แกว่งขาหน้า-หลัง (Leg Swings)</text>
+  <ellipse cx="100" cy="175" rx="40" ry="6" fill="#FDE68A"/>
+  <!-- Standing leg -->
+  <rect x="98" y="128" width="10" height="44" rx="4" fill="#D97706"/>
+  <rect x="96" y="166" width="14" height="8" rx="3" fill="#FFFFFF" stroke="#B45309" stroke-width="1.5"/>
+  <rect x="86" y="88" width="32" height="40" rx="7" fill="#F59E0B"/>
+  <circle cx="102" cy="70" r="15" fill="#FCD34D"/><rect x="89" y="64" width="26" height="4.5" rx="2" fill="#EF4444"/>
+  <!-- Swinging leg -->
+  <g class="swing">
+    <path d="M94 128 L88 166" stroke="#EF4444" stroke-width="9" stroke-linecap="round"/>
+    <rect x="82" y="164" width="14" height="8" rx="3" fill="#FFFFFF" stroke="#B45309" stroke-width="1.5"/>
+  </g>
+  <!-- Motion arc -->
+  <path d="M68 162 Q90 174 118 162" stroke="#B45309" stroke-width="2" stroke-dasharray="3,3" fill="none"/>
+  <rect x="25" y="178" width="150" height="16" rx="8" fill="#F59E0B" fill-opacity="0.2"/>
+  <text x="100" y="190" fill="#92400E" font-family="sans-serif" font-size="9" font-weight="bold" text-anchor="middle">ทรงตัว แกว่งขาไปหน้า-หลังสบายๆ</text>
+</svg>

@@ -584,6 +584,179 @@
         </div>
 
       </div>
+
+      <!-- Gallery: 10 Stretching Poses & 10 Dynamic Warm-up Poses -->
+      <div class="mt-14 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-card">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-2xl">🏃‍♀️🧘‍♂️</span>
+              <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+                คลังภาพตัวอย่างท่าทาง (Animated Pose Library)
+              </h3>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">
+              ภาพประกอบและแอนิเมชันตัวอย่างท่าทางที่ถูกต้องตามหลักสุขศึกษาและพลศึกษา เพื่อให้นักเรียนดูเป็นตัวอย่างก่อนฝึกซ้อม
+            </p>
+          </div>
+          <div class="inline-flex p-1 bg-slate-100 rounded-2xl border border-slate-200">
+            <button id="tab-gallery-stretch" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all cursor-pointer">
+              🧘 ยืดกล้ามเนื้อ (Stretching 10 ท่า)
+            </button>
+            <button id="tab-gallery-warmup" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-amber-800 transition-all cursor-pointer">
+              🔥 อบอุ่นร่างกาย (Warm-up 10 ท่า)
+            </button>
+          </div>
+        </div>
+
+        <!-- 10 Static Stretching Poses Gallery -->
+        <div id="grid-gallery-stretch" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+          <div class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-emerald-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/stretch_neck.svg" alt="Neck Stretch" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">1. ยืดกล้ามเนื้อคอ</div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Neck Stretch</div>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-emerald-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/stretch_shoulder_cross.svg" alt="Cross Shoulder" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">2. ยืดหัวไหล่ข้ามลำตัว</div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Cross Shoulder</div>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-emerald-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/stretch_triceps.svg" alt="Triceps Stretch" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">3. ยืดหลังแขนสะบัก</div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Triceps Stretch</div>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-emerald-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/stretch_chest_biceps.svg" alt="Chest Opener" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">4. ยืดอกและหัวไหล่</div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Chest Opener</div>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-emerald-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/stretch_side_bend.svg" alt="Side Stretch" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">5. ยืดลำตัวด้านข้าง</div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Side Stretch</div>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-emerald-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/stretch_upper_back.svg" alt="Upper Back" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">6. ยืดหลังส่วนบน</div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Upper Back</div>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-emerald-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/stretch_quads.svg" alt="Quad Stretch" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">7. ยืดหน้าขาต้นขา</div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Quad Stretch</div>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-emerald-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/stretch_hamstrings.svg" alt="Hamstrings" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">8. ยืดหลังขาข้อพับ</div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Hamstring Stretch</div>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-emerald-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/stretch_calf.svg" alt="Calf Runner" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">9. ยืดน่องเอ็นร้อยหวาย</div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Calf Runner</div>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-emerald-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/stretch_groin.svg" alt="Side Groin" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">10. ยืดขาหนีบสะโพก</div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Side Groin Stretch</div>
+          </div>
+        </div>
+
+        <!-- 10 Dynamic Warm-up Poses Gallery -->
+        <div id="grid-gallery-warmup" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+          <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-amber-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/dynamic_arm_circles.svg" alt="Arm Circles" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">1. หมุนแขนวงกลม</div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-0.5">Arm Circles</div>
+          </div>
+          <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-amber-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/dynamic_high_knees.svg" alt="High Knees" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">2. ยกเข่าสูงคึกคัก</div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-0.5">High Knees March</div>
+          </div>
+          <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-amber-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/dynamic_butt_kicks.svg" alt="Butt Kicks" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">3. เตะส้นเท้าแตะก้น</div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-0.5">Butt Kicks</div>
+          </div>
+          <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-amber-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/dynamic_jumping_jacks.svg" alt="Jumping Jacks" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">4. กระโดดตบรูปดาว</div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-0.5">Jumping Jacks</div>
+          </div>
+          <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-amber-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/dynamic_squats.svg" alt="Gentle Squats" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">5. สควอทอุ่นข้อเข่า</div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-0.5">Gentle Squats</div>
+          </div>
+          <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-amber-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/dynamic_torso_twist.svg" alt="Torso Twists" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">6. บิดลำตัวสลับข้าง</div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-0.5">Torso Twists</div>
+          </div>
+          <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-amber-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/dynamic_side_lunges.svg" alt="Side Lunges" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">7. สไลด์ย่อข้าง</div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-0.5">Side Lunges</div>
+          </div>
+          <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-amber-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/dynamic_leg_swings.svg" alt="Leg Swings" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">8. แกว่งขาหน้า-หลัง</div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-0.5">Leg Swings</div>
+          </div>
+          <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-amber-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/dynamic_overhead_reach.svg" alt="Sky Reach" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">9. เหยียดแขนแตะฟ้า</div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-0.5">Overhead Reach</div>
+          </div>
+          <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 text-center hover:shadow-md transition-all group">
+            <div class="aspect-square rounded-xl bg-white border border-amber-200 p-1 mb-2 overflow-hidden shadow-2xs group-hover:scale-105 transition-transform">
+              <img src="assets/poses/dynamic_ankle_hops.svg" alt="Ankle Hops" class="w-full h-full object-contain">
+            </div>
+            <div class="font-bold text-xs text-slate-900">10. สปริงข้อเท้าเบาๆ</div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-0.5">Ankle Hops</div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -803,6 +976,28 @@
         }
       });
     });
+
+    // Pose Gallery Tab Switcher
+    const tabStretch = document.getElementById('tab-gallery-stretch');
+    const tabWarmup = document.getElementById('tab-gallery-warmup');
+    const gridStretch = document.getElementById('grid-gallery-stretch');
+    const gridWarmup = document.getElementById('grid-gallery-warmup');
+
+    if (tabStretch && tabWarmup && gridStretch && gridWarmup) {
+      tabStretch.addEventListener('click', () => {
+        tabStretch.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all cursor-pointer';
+        tabWarmup.className = 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-amber-800 transition-all cursor-pointer';
+        gridStretch.classList.remove('hidden');
+        gridWarmup.classList.add('hidden');
+      });
+
+      tabWarmup.addEventListener('click', () => {
+        tabWarmup.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-white text-amber-700 shadow-xs transition-all cursor-pointer';
+        tabStretch.className = 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-emerald-800 transition-all cursor-pointer';
+        gridWarmup.classList.remove('hidden');
+        gridStretch.classList.add('hidden');
+      });
+    }
   </script>
 
 </body>

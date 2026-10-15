@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFFBEB"/><stop offset="100%" stop-color="#FEF3C7"/></linearGradient></defs>
+  <style>.squat { animation: squatDown 2s ease-in-out infinite alternate; } @keyframes squatDown { 0%{transform: translateY(0);} 100%{transform: translateY(12px);} }</style>
+  <rect width="200" height="200" rx="24" fill="url(#bg)" stroke="#F59E0B" stroke-width="2"/>
+  <rect x="15" y="15" width="170" height="26" rx="13" fill="#B45309"/>
+  <text x="100" y="32" fill="#FFFFFF" font-family="sans-serif" font-size="10.5" font-weight="bold" text-anchor="middle">🔥 สควอทอุ่นข้อเข่า (Gentle Squats)</text>
+  <ellipse cx="100" cy="175" rx="45" ry="6" fill="#FDE68A"/>
+  <g class="squat">
+    <!-- Legs bent 90 degrees -->
+    <path d="M84 126 L66 144 L66 168" stroke="#D97706" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <rect x="60" y="166" width="15" height="8" rx="3" fill="#FFFFFF" stroke="#B45309" stroke-width="1.5"/>
+    <path d="M116 126 L134 144 L134 168" stroke="#D97706" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <rect x="128" y="166" width="15" height="8" rx="3" fill="#FFFFFF" stroke="#B45309" stroke-width="1.5"/>
+    <!-- Torso & Head -->
+    <rect x="84" y="92" width="32" height="36" rx="7" fill="#F59E0B"/>
+    <circle cx="100" cy="74" r="14" fill="#FCD34D"/><rect x="88" y="68" width="24" height="4" rx="2" fill="#EF4444"/>
+    <!-- Hands outstretched forward for balance -->
+    <path d="M84 98 L58 104" stroke="#FCD34D" stroke-width="7" stroke-linecap="round"/>
+    <path d="M116 98 L142 104" stroke="#FCD34D" stroke-width="7" stroke-linecap="round"/>
+  </g>
+  <!-- Down & Up Arrows -->
+  <path d="M38 120 L38 140" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="38,144 34,138 42,138" fill="#EF4444"/>
+  <rect x="25" y="178" width="150" height="16" rx="8" fill="#F59E0B" fill-opacity="0.2"/>
+  <text x="100" y="190" fill="#92400E" font-family="sans-serif" font-size="9" font-weight="bold" text-anchor="middle">ย่อสะโพกลงเหมือนนั่งเก้าอี้</text>
+</svg>

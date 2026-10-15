@@ -468,8 +468,10 @@ class App {
 
     container.innerHTML = stretches.map((s, idx) => `
       <button class="btn-select-stretch w-full p-2.5 sm:p-3 bg-emerald-50/70 hover:bg-emerald-100 border border-emerald-200/90 rounded-2xl flex items-center justify-between text-left transition-all hover:scale-[1.01] shadow-xs active:scale-95" data-id="${s.id}">
-        <div class="flex items-center gap-2.5">
-          <span class="text-2xl">${s.icon || '🧘'}</span>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-white border border-emerald-200 p-1 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
+            <img src="assets/poses/${s.id}.svg" alt="${s.name}" class="w-full h-full object-contain" onerror="this.src='assets/poses/stretch_neck.svg'">
+          </div>
           <div>
             <div class="font-bold text-xs text-emerald-950 flex items-center gap-1.5">
               <span>${idx + 1}. ${s.name}</span>
@@ -506,8 +508,10 @@ class App {
 
     container.innerHTML = warmups.map((w, idx) => `
       <button class="btn-select-warmup w-full p-2.5 sm:p-3 bg-amber-50/70 hover:bg-amber-100 border border-amber-200/90 rounded-2xl flex items-center justify-between text-left transition-all hover:scale-[1.01] shadow-xs active:scale-95" data-id="${w.id}">
-        <div class="flex items-center gap-2.5">
-          <span class="text-2xl">${w.icon || '🔥'}</span>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-white border border-amber-200 p-1 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
+            <img src="assets/poses/${w.id}.svg" alt="${w.name}" class="w-full h-full object-contain" onerror="this.src='assets/poses/dynamic_squats.svg'">
+          </div>
           <div>
             <div class="font-bold text-xs text-amber-950 flex items-center gap-1.5">
               <span>${idx + 1}. ${w.name}</span>
@@ -604,12 +608,21 @@ class App {
       rewardEl.textContent = this.currentExercise.fixedXP ? `+${this.currentExercise.fixedXP} EXP` : `+${this.currentExercise.pointsPerRep || 20} EXP/ครั้ง`;
     }
 
-    // Start 8-bit visual tutorial animation
-    if (!this.tutorialAnim && this.tutorialCanvas) {
-      this.tutorialAnim = new TutorialAnimation(this.tutorialCanvas);
+    // Set Pose Illustrated Demo Image
+    const poseImg = document.getElementById("brief-pose-img");
+    if (poseImg) {
+      poseImg.src = `assets/poses/${this.currentExercise.id}.svg`;
     }
-    if (this.tutorialAnim) {
-      this.tutorialAnim.start(this.currentExercise.id);
+    const badgeType = document.getElementById("brief-badge-type");
+    if (badgeType) {
+      badgeType.textContent = this.currentExercise.badge || this.currentExercise.sport || "ออกกำลังกาย";
+      if (this.currentExercise.sport === "Stretching") {
+        badgeType.className = "px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold";
+      } else if (this.currentExercise.sport === "Warm-up") {
+        badgeType.className = "px-2 py-0.5 rounded-full text-[10px] bg-amber-100 text-amber-800 font-bold";
+      } else {
+        badgeType.className = "px-2 py-0.5 rounded-full text-[10px] bg-indigo-100 text-indigo-800 font-bold";
+      }
     }
 
     this.modalBrief.classList.remove("hidden");
@@ -624,6 +637,12 @@ class App {
     this.isCalibrated = false;
     this.postureEvaluator = new PostureEvaluator(this.currentExercise);
     this.framingChecker.reset();
+
+    // Update Floating Mini PIP Pose Guide on Camera
+    const pipImg = document.getElementById("cam-pip-img");
+    const pipName = document.getElementById("cam-pip-name");
+    if (pipImg) pipImg.src = `assets/poses/${this.currentExercise.id}.svg`;
+    if (pipName) pipName.textContent = this.currentExercise.name;
 
     this.camStatus.textContent = "กำลังเชื่อมต่อกล้อง...";
     this.camFeedback.textContent = "กรุณากดอนุญาตกล้อง";

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EEF2FF"/><stop offset="100%" stop-color="#E0E7FF"/></linearGradient></defs>
+  <style>.smashArm { animation: smashSwing 1.4s ease-in-out infinite alternate; transform-origin: 114px 92px; } @keyframes smashSwing { 0%{transform: rotate(-40deg);} 100%{transform: rotate(35deg);} }</style>
+  <rect width="200" height="200" rx="24" fill="url(#bg)" stroke="#6366F1" stroke-width="2"/>
+  <rect x="15" y="15" width="170" height="26" rx="13" fill="#4338CA"/>
+  <text x="100" y="32" fill="#FFFFFF" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">🏐 เสิร์ฟลูกมือบน (Overhand Serve)</text>
+  <ellipse cx="100" cy="175" rx="40" ry="6" fill="#C7D2FE"/>
+  <rect x="86" y="128" width="10" height="44" rx="4" fill="#4F46E5"/>
+  <rect x="104" y="128" width="10" height="44" rx="4" fill="#4F46E5"/>
+  <rect x="83" y="166" width="14" height="8" rx="3" fill="#FFFFFF" stroke="#4338CA" stroke-width="1.5"/>
+  <rect x="103" y="166" width="14" height="8" rx="3" fill="#FFFFFF" stroke="#4338CA" stroke-width="1.5"/>
+  <rect x="82" y="92" width="36" height="38" rx="7" fill="#006837"/>
+  <circle cx="100" cy="72" r="14" fill="#FCD34D"/><rect x="88" y="66" width="24" height="4" rx="2" fill="#EF4444"/>
+  <!-- Non-hitting arm pointing up -->
+  <path d="M84 94 L76 70" stroke="#FCD34D" stroke-width="6" stroke-linecap="round"/>
+  <!-- Hitting arm cocked high above head -->
+  <g class="smashArm">
+    <path d="M114 92 L124 64 L114 46" stroke="#EF4444" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  <!-- Volleyball tossed high -->
+  <circle cx="92" cy="42" r="12" fill="#FCD34D" stroke="#1E3A8A" stroke-width="2"/>
+  <rect x="25" y="178" width="150" height="16" rx="8" fill="#6366F1" fill-opacity="0.2"/>
+  <text x="100" y="190" fill="#312E81" font-family="sans-serif" font-size="9" font-weight="bold" text-anchor="middle">โยนบอล ง้างศอก ตบส่งบอลเหนือหัว</text>
+</svg>

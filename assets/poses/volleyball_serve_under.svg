@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EEF2FF"/><stop offset="100%" stop-color="#E0E7FF"/></linearGradient></defs>
+  <style>.serveArm { animation: swingArm 1.5s ease-in-out infinite alternate; transform-origin: 86px 98px; } @keyframes swingArm { 0%{transform: rotate(-35deg);} 100%{transform: rotate(30deg);} }</style>
+  <rect width="200" height="200" rx="24" fill="url(#bg)" stroke="#6366F1" stroke-width="2"/>
+  <rect x="15" y="15" width="170" height="26" rx="13" fill="#4338CA"/>
+  <text x="100" y="32" fill="#FFFFFF" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">🏐 เสิร์ฟลูกมือล่าง (Underhand Serve)</text>
+  <ellipse cx="100" cy="175" rx="45" ry="6" fill="#C7D2FE"/>
+  <path d="M84 128 L66 150 L64 168" stroke="#4F46E5" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <rect x="58" y="166" width="14" height="8" rx="3" fill="#FFFFFF" stroke="#4338CA" stroke-width="1.5"/>
+  <path d="M98 128 L118 150 L120 168" stroke="#4F46E5" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <rect x="114" y="166" width="14" height="8" rx="3" fill="#FFFFFF" stroke="#4338CA" stroke-width="1.5"/>
+  <rect x="78" y="92" width="34" height="38" rx="7" fill="#006837"/>
+  <circle cx="96" cy="74" r="14" fill="#FCD34D"/><rect x="84" y="68" width="24" height="4" rx="2" fill="#EF4444"/>
+  <!-- Non-hitting hand holding ball out front -->
+  <path d="M112 96 L134 104" stroke="#FCD34D" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="144" cy="102" r="11" fill="#FCD34D" stroke="#1E3A8A" stroke-width="2"/>
+  <!-- Hitting arm swinging underhand -->
+  <g class="serveArm">
+    <path d="M86 98 L76 130" stroke="#EF4444" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="74" cy="132" r="5" fill="#EF4444"/>
+  </g>
+  <rect x="25" y="178" width="150" height="16" rx="8" fill="#6366F1" fill-opacity="0.2"/>
+  <text x="100" y="190" fill="#312E81" font-family="sans-serif" font-size="9" font-weight="bold" text-anchor="middle">ถือบอลระดับเอว เหวี่ยงแขนกระทบใต้บอล</text>
+</svg>

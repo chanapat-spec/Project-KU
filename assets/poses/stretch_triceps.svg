@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ECFDF5"/><stop offset="100%" stop-color="#D1FAE5"/></linearGradient></defs>
+  <style>.tricep { animation: pullTri 2s ease-in-out infinite alternate; } @keyframes pullTri { 0%{transform: scaleY(1);} 100%{transform: scaleY(0.97);} }</style>
+  <rect width="200" height="200" rx="24" fill="url(#bg)" stroke="#10B981" stroke-width="2"/>
+  <rect x="15" y="15" width="170" height="26" rx="13" fill="#065F46"/>
+  <text x="100" y="32" fill="#FFFFFF" font-family="sans-serif" font-size="10.5" font-weight="bold" text-anchor="middle">🧘 ยืดหลังแขนและสะบัก (Triceps)</text>
+  <ellipse cx="100" cy="175" rx="35" ry="6" fill="#A7F3D0"/>
+  <rect x="86" y="130" width="10" height="42" rx="4" fill="#047857"/>
+  <rect x="104" y="130" width="10" height="42" rx="4" fill="#047857"/>
+  <rect x="83" y="166" width="14" height="8" rx="3" fill="#FFFFFF" stroke="#065F46" stroke-width="1.5"/>
+  <rect x="103" y="166" width="14" height="8" rx="3" fill="#FFFFFF" stroke="#065F46" stroke-width="1.5"/>
+  <rect x="82" y="92" width="36" height="40" rx="7" fill="#059669"/>
+  <circle cx="100" cy="74" r="15" fill="#FCD34D"/><rect x="87" y="68" width="26" height="4.5" rx="2" fill="#EF4444"/>
+  <!-- Right Arm Bent behind head -->
+  <g class="tricep">
+    <circle cx="116" cy="58" r="8" fill="#F59E0B" opacity="0.7"/>
+    <path d="M112 92 L116 58 L104 76" stroke="#FCD34D" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <!-- Left Hand assisting elbow -->
+    <path d="M84 92 L86 64 L114 58" stroke="#059669" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  <rect x="25" y="178" width="150" height="16" rx="8" fill="#10B981" fill-opacity="0.2"/>
+  <text x="100" y="190" fill="#065F46" font-family="sans-serif" font-size="9" font-weight="bold" text-anchor="middle">จับข้อศอกดึงไปหลังศีรษะเบาๆ</text>
+</svg>
