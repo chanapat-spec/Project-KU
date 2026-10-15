@@ -62,6 +62,7 @@ export const storage = {
       room: (student.room || 'ห้อง 1').trim(),
       subject: (student.subject || 'volleyball').trim(),
       totalXP: Math.max(0, currentXP || 0),
+      hasBmiXpClaimed: Boolean(student.hasBmiXpClaimed),
       createdAt: student.createdAt || new Date().toISOString()
     };
     localStorage.setItem(STORAGE_KEYS.CURRENT_STUDENT, JSON.stringify(studentData));
@@ -580,6 +581,20 @@ export const storage = {
   getHealthRecordByStudent(studentId) {
     const all = this.getAllHealthRecords();
     return all.find(r => r.studentId === studentId || r.id === studentId);
+  },
+
+  hasStudentClaimedBmiXP(studentId) {
+    if (!studentId) return false;
+    const student = this.getStudent();
+    if (student && (student.id === studentId || studentId.includes(student.name)) && student.hasBmiXpClaimed) {
+      return true;
+    }
+    // Check if this student already has a non-dummy health record saved
+    const existing = this.getHealthRecordByStudent(studentId);
+    if (existing && !["ด.ญ. พลอย", "ด.ช. วิน", "ด.ช. เบส", "ด.ญ. มายด์"].some(n => existing.id?.includes(n))) {
+      return true;
+    }
+    return false;
   },
 
   saveHealthRecord(data) {

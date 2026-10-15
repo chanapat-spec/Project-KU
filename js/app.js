@@ -404,6 +404,8 @@ class App {
           return;
         }
 
+        const alreadyClaimed = storage.hasStudentClaimedBmiXP(student.id);
+
         const record = storage.saveHealthRecord({
           name: student.name,
           studentNumber: student.studentNumber,
@@ -414,19 +416,35 @@ class App {
           height
         });
 
-        // Award +10 XP Bonus
-        student.totalXP = (student.totalXP || 0) + 10;
-        storage.saveStudent(student);
-        this.currentStudent = student;
-        if (this.playerXP) this.playerXP.textContent = `${student.totalXP} XP`;
-        sound.playCoin();
-        sound.speak(`บันทึกข้อมูลสุขภาพเรียบร้อย คุณมีค่า บีเอ็มไอ ${record.bmi} ${record.classification}`);
+        if (!alreadyClaimed) {
+          // Award +10 XP Bonus ONLY on first-time submission
+          student.totalXP = (student.totalXP || 0) + 10;
+          student.hasBmiXpClaimed = true;
+          storage.saveStudent(student);
+          this.currentStudent = student;
+          if (this.playerXP) this.playerXP.textContent = `${student.totalXP} XP`;
+          sound.playCoin();
+          sound.speak(`บันทึกข้อมูลสุขภาพเรียบร้อย ได้รับโบนัส 10 XP คุณมีค่า บีเอ็มไอ ${record.bmi} ${record.classification}`);
 
-        this.showNotificationToast(
-          "🏥 บันทึกข้อมูลสุขภาพ & BMI สำเร็จ!",
-          `ค่า BMI: ${record.bmi} (${record.classification}) รับโบนัสรักสุขภาพ +10 XP! ⭐`,
-          "❤️"
-        );
+          this.showNotificationToast(
+            "🏥 บันทึกข้อมูลสุขภาพ & BMI สำเร็จ!",
+            `ค่า BMI: ${record.bmi} (${record.classification}) รับโบนัสรักสุขภาพ +10 XP! ⭐`,
+            "❤️"
+          );
+        } else {
+          // Editing/updating existing record: Free to edit, but no additional XP
+          student.hasBmiXpClaimed = true;
+          storage.saveStudent(student);
+          this.currentStudent = student;
+          sound.playScore();
+          sound.speak(`อัปเดตข้อมูลสุขภาพเรียบร้อย คุณมีค่า บีเอ็มไอ ${record.bmi} ${record.classification}`);
+
+          this.showNotificationToast(
+            "🏥 อัปเดตข้อมูลสุขภาพสำเร็จ!",
+            `อัปเดตค่า BMI: ${record.bmi} (${record.classification}) เรียบร้อยแล้ว`,
+            "❤️"
+          );
+        }
 
         document.getElementById("modal-health-bmi").classList.add("hidden");
         if (this.gameEngine) this.gameEngine.resume();
@@ -729,6 +747,19 @@ class App {
       document.getElementById("health-student-name").textContent = student.name;
       document.getElementById("health-student-room").textContent = student.room || "ห้อง 1";
       document.getElementById("health-student-number").textContent = `เลขที่ ${student.studentNumber || '1'}`;
+
+      // Check if student has already claimed BMI bonus XP
+      const hasClaimed = storage.hasStudentClaimedBmiXP(student.id);
+      const subtitleEl = document.getElementById("health-bmi-subtitle");
+      const btnTextEl = document.getElementById("health-btn-text");
+
+      if (hasClaimed) {
+        if (subtitleEl) subtitleEl.textContent = "แก้ไขข้อมูลสุขภาพ & BMI (ได้รับโบนัส +10 XP แล้ว) ✅";
+        if (btnTextEl) btnTextEl.textContent = "อัปเดตข้อมูลสุขภาพ";
+      } else {
+        if (subtitleEl) subtitleEl.textContent = "บันทึกข้อมูลการเจริญเติบโต รับโบนัส +10 XP ⭐";
+        if (btnTextEl) btnTextEl.textContent = "บันทึกและส่งข้อมูลสุขภาพ (+10 XP)";
+      }
 
       // Pre-fill existing record if available
       const existing = storage.getHealthRecordByStudent(student.id);
