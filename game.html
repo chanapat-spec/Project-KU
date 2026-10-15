@@ -162,6 +162,12 @@
             <span class="text-xs">⭐</span>
             <span id="player-xp" class="text-[10px] text-amber-900 font-pixel font-bold">0 XP</span>
           </div>
+
+          <!-- Realtime Online Classmates Badge -->
+          <div id="badge-online-peers" class="flex items-center gap-1 px-2.5 py-1 bg-emerald-100/90 border border-emerald-300/80 rounded-full text-[10px] font-bold text-emerald-800 shadow-xs shrink-0" title="เพื่อนร่วมห้องที่กำลังออนไลน์">
+            <span>👥</span>
+            <span>ออนไลน์ 1 คน</span>
+          </div>
         </div>
 
         <!-- Mobile Right Top: Sound & Red Logout Pill (Guaranteed to NEVER fall off screen in portrait!) -->
@@ -591,61 +597,123 @@
   <!-- MODAL: WARDROBE & SKINS SHOP (แต่งตัว)     -->
   <!-- ========================================== -->
   <div id="modal-wardrobe" class="app-modal hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-40">
-    <div class="pixel-box w-full max-w-sm p-6 bg-white border border-slate-200 rounded-3xl shadow-2xl max-h-[85vh] overflow-y-auto text-slate-800">
+    <div class="pixel-box w-full max-w-sm p-5 sm:p-6 bg-white border border-slate-200 rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto text-slate-800">
       <div class="flex justify-between items-center mb-3">
-        <h3 class="font-pixel text-xs text-purple-700 flex items-center gap-1.5">
-          <span>👕</span> ห้องแต่งตัวนักกีฬา (Wardrobe)
+        <h3 class="font-pixel text-xs text-purple-700 flex items-center gap-1.5 font-bold">
+          <span>👕</span> ห้องแต่งตัวนักกีฬา & คอสตูมแฟนซี
         </h3>
-        <button class="btn-close-modal text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer">✕</button>
       </div>
 
       <div class="space-y-4 text-xs">
-        <!-- Jersey Color Selection -->
+        <!-- 1. Headwear Selection -->
         <div>
-          <label class="block text-slate-700 font-bold mb-2">สีเสื้อทีม (Team Jersey):</label>
+          <label class="block text-slate-700 font-bold mb-2 flex items-center gap-1.5">
+            <span>👑</span> หมวก & เครื่องประดับหัว (Headwear):
+          </label>
           <div class="grid grid-cols-2 gap-2">
-            <button class="btn-skin-jersey p-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all" data-color="#006837">
-              <span class="w-4 h-4 rounded-full bg-[#006837] shadow-xs"></span>
-              <span class="font-medium text-slate-800">เขียว KU (ฟรี)</span>
+            <button type="button" class="btn-skin-headwear p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-headwear="headband">
+              <span class="text-base">🔴</span>
+              <span class="font-medium text-slate-800 text-[11px]">ผ้าคาดสปอร์ต</span>
             </button>
-            <button class="btn-skin-jersey p-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all" data-color="#e53e3e">
-              <span class="w-4 h-4 rounded-full bg-[#e53e3e] shadow-xs"></span>
-              <span class="font-medium text-slate-800">แดงไฟเออร์</span>
+            <button type="button" class="btn-skin-headwear p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-headwear="witch_hat">
+              <span class="text-base">🧙‍♀️</span>
+              <span class="font-medium text-slate-800 text-[11px]">หมวกแม่มด</span>
             </button>
-            <button class="btn-skin-jersey p-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all" data-color="#3182ce">
-              <span class="w-4 h-4 rounded-full bg-[#3182ce] shadow-xs"></span>
-              <span class="font-medium text-slate-800">น้ำเงินโอเชี่ยน</span>
+            <button type="button" class="btn-skin-headwear p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-headwear="astronaut">
+              <span class="text-base">🧑‍🚀</span>
+              <span class="font-medium text-slate-800 text-[11px]">หมวกอวกาศ</span>
             </button>
-            <button class="btn-skin-jersey p-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all" data-color="#ecc94b">
-              <span class="w-4 h-4 rounded-full bg-[#ecc94b] shadow-xs"></span>
-              <span class="font-medium text-slate-800">ทองแชมเปี้ยน ⭐</span>
+            <button type="button" class="btn-skin-headwear p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-headwear="bear_hood">
+              <span class="text-base">🐻</span>
+              <span class="font-medium text-slate-800 text-[11px]">หูหมีเท็ดดี้</span>
+            </button>
+            <button type="button" class="btn-skin-headwear col-span-2 p-2 rounded-2xl border border-amber-300 bg-amber-50 hover:border-amber-500 hover:bg-amber-100/50 flex items-center justify-center gap-2 transition-all cursor-pointer" data-headwear="crown">
+              <span class="text-base">👑</span>
+              <span class="font-bold text-amber-900 text-[11px]">มงกุฎทองคำราชันย์ ⭐</span>
             </button>
           </div>
         </div>
 
-        <!-- Accessories -->
+        <!-- 2. Outfit Selection -->
         <div>
-          <label class="block text-slate-700 font-bold mb-2">ไอเทมเสริม (Accessories):</label>
+          <label class="block text-slate-700 font-bold mb-2 flex items-center gap-1.5">
+            <span>🎽</span> ชุดตัวละคร (Outfits):
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" class="btn-skin-outfit p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-outfit="jersey">
+              <span class="text-base">🎽</span>
+              <span class="font-medium text-slate-800 text-[11px]">ชุดกีฬา KU PE</span>
+            </button>
+            <button type="button" class="btn-skin-outfit p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-outfit="witch_robe">
+              <span class="text-base">🔮</span>
+              <span class="font-medium text-slate-800 text-[11px]">เสื้อคลุมเวทมนตร์</span>
+            </button>
+            <button type="button" class="btn-skin-outfit p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-outfit="astronaut">
+              <span class="text-base">🚀</span>
+              <span class="font-medium text-slate-800 text-[11px]">ชุดนักบินอวกาศ</span>
+            </button>
+            <button type="button" class="btn-skin-outfit p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-outfit="bear_onesie">
+              <span class="text-base">🧸</span>
+              <span class="font-medium text-slate-800 text-[11px]">ชุดหมีขนปุย</span>
+            </button>
+            <button type="button" class="btn-skin-outfit col-span-2 p-2 rounded-2xl border border-amber-300 bg-amber-50 hover:border-amber-500 hover:bg-amber-100/50 flex items-center justify-center gap-2 transition-all cursor-pointer" data-outfit="champion_gold">
+              <span class="text-base">🏆</span>
+              <span class="font-bold text-amber-900 text-[11px]">ชุดเกราะทองคำแชมเปี้ยน ⭐</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Jersey Color Selection (When using Jersey) -->
+        <div>
+          <label class="block text-slate-700 font-bold mb-2 flex items-center gap-1.5">
+            <span>🎨</span> สีเสื้อทีม (Team Colors):
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" class="btn-skin-jersey p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-color="#006837">
+              <span class="w-4 h-4 rounded-full bg-[#006837] shadow-xs"></span>
+              <span class="font-medium text-slate-800 text-[11px]">เขียว KU (ฟรี)</span>
+            </button>
+            <button type="button" class="btn-skin-jersey p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-color="#e53e3e">
+              <span class="w-4 h-4 rounded-full bg-[#e53e3e] shadow-xs"></span>
+              <span class="font-medium text-slate-800 text-[11px]">แดงไฟเออร์</span>
+            </button>
+            <button type="button" class="btn-skin-jersey p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-color="#3182ce">
+              <span class="w-4 h-4 rounded-full bg-[#3182ce] shadow-xs"></span>
+              <span class="font-medium text-slate-800 text-[11px]">น้ำเงินโอเชี่ยน</span>
+            </button>
+            <button type="button" class="btn-skin-jersey p-2 rounded-2xl border border-slate-200 bg-slate-50 hover:border-purple-500 hover:bg-purple-50/50 flex items-center gap-2 transition-all cursor-pointer" data-color="#ecc94b">
+              <span class="w-4 h-4 rounded-full bg-[#ecc94b] shadow-xs"></span>
+              <span class="font-medium text-slate-800 text-[11px]">ทองแชมเปี้ยน</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. Accessories & Pet -->
+        <div>
+          <label class="block text-slate-700 font-bold mb-2 flex items-center gap-1.5">
+            <span>✨</span> อุปกรณ์เสริม & สัตว์เลี้ยง (Accessories):
+          </label>
           <div class="space-y-2">
             <label class="flex items-center justify-between p-2.5 bg-slate-50 rounded-2xl border border-slate-200 hover:border-purple-300 cursor-pointer transition-all">
-              <span class="flex items-center gap-2 font-medium text-slate-800">
+              <span class="flex items-center gap-2 font-medium text-slate-800 text-[11px]">
                 <span>🛡️</span> สนับเข่าเรโทร (Kneepads)
               </span>
-              <input type="checkbox" id="check-kneepads" class="rounded w-4 h-4 text-purple-600 focus:ring-purple-500">
+              <input type="checkbox" id="check-kneepads" class="rounded w-4 h-4 text-purple-600 focus:ring-purple-500 cursor-pointer">
             </label>
 
             <label class="flex items-center justify-between p-2.5 bg-slate-50 rounded-2xl border border-slate-200 hover:border-purple-300 cursor-pointer transition-all">
-              <span class="flex items-center gap-2 font-medium text-slate-800">
-                <span>🏐</span> สัตว์เลี้ยง: ลูกวอลเลย์บอลติดปีก!
+              <span class="flex items-center gap-2 font-medium text-slate-800 text-[11px]">
+                <span>🏐</span> สัตว์เลี้ยง: ลูกวอลเลย์บอลติดปีก บินตามตัว!
               </span>
-              <input type="checkbox" id="check-pet" class="rounded w-4 h-4 text-purple-600 focus:ring-purple-500">
+              <input type="checkbox" id="check-pet" class="rounded w-4 h-4 text-purple-600 focus:ring-purple-500 cursor-pointer">
             </label>
           </div>
         </div>
       </div>
 
-      <button class="btn-close-modal pixel-btn w-full py-3 bg-purple-600 hover:bg-purple-500 text-white text-xs mt-5 rounded-full shadow-md">
-        เสร็จสิ้นการแต่งตัว
+      <button class="btn-close-modal pixel-btn w-full py-3 bg-purple-600 hover:bg-purple-500 text-white text-xs mt-5 rounded-full shadow-md font-bold cursor-pointer">
+        ✓ เสร็จสิ้นการแต่งตัว
       </button>
     </div>
   </div>

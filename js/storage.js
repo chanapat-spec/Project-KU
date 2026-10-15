@@ -316,21 +316,31 @@ export const storage = {
   // WARDROBE & SKINS CUSTOMIZATION
   // ==========================================
   getWardrobe() {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.WARDROBE);
-      if (data) return JSON.parse(data);
-    } catch (e) {}
-
-    // Default starting skin
-    return {
+    const defaultWardrobe = {
       equipped: {
         jerseyColor: "#006837", // KU Green
         headbandColor: "#e53e3e", // Red Headband
+        headwear: "headband", // "headband", "witch_hat", "astronaut", "bear_hood", "crown"
+        outfit: "jersey", // "jersey", "witch_robe", "astronaut", "bear_onesie", "champion_gold"
         hasKneepads: false,
-        hasPet: false
+        hasPet: false,
+        petType: "volleyball"
       },
-      unlocked: ["jersey_green", "headband_red"]
+      unlocked: ["jersey_green", "headband_red", "witch_hat", "astronaut", "bear_hood", "crown"]
     };
+
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.WARDROBE);
+      if (data) {
+        const parsed = JSON.parse(data);
+        return {
+          equipped: { ...defaultWardrobe.equipped, ...(parsed.equipped || {}) },
+          unlocked: parsed.unlocked || defaultWardrobe.unlocked
+        };
+      }
+    } catch (e) {}
+
+    return defaultWardrobe;
   },
 
   saveWardrobe(wardrobe) {

@@ -451,16 +451,60 @@ class App {
       });
     }
 
-    // 10. Wardrobe Item Buttons
+    // 10. Wardrobe Item Buttons (Headwear, Outfits, Colors, Accessories)
+    document.querySelectorAll(".btn-skin-headwear").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const headwear = btn.getAttribute("data-headwear");
+        const wardrobe = storage.getWardrobe();
+        wardrobe.equipped.headwear = headwear;
+        storage.saveWardrobe(wardrobe);
+        if (this.gameEngine) {
+          this.gameEngine.player.setSkin(wardrobe.equipped);
+          this.gameEngine.multiplayer.broadcastPose(this.gameEngine.player);
+        }
+        document.querySelectorAll(".btn-skin-headwear").forEach(b => {
+          b.classList.toggle("ring-2", b === btn);
+          b.classList.toggle("ring-purple-500", b === btn);
+          b.classList.toggle("bg-purple-100/70", b === btn);
+        });
+        sound.playCoin();
+      });
+    });
+
+    document.querySelectorAll(".btn-skin-outfit").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const outfit = btn.getAttribute("data-outfit");
+        const wardrobe = storage.getWardrobe();
+        wardrobe.equipped.outfit = outfit;
+        storage.saveWardrobe(wardrobe);
+        if (this.gameEngine) {
+          this.gameEngine.player.setSkin(wardrobe.equipped);
+          this.gameEngine.multiplayer.broadcastPose(this.gameEngine.player);
+        }
+        document.querySelectorAll(".btn-skin-outfit").forEach(b => {
+          b.classList.toggle("ring-2", b === btn);
+          b.classList.toggle("ring-purple-500", b === btn);
+          b.classList.toggle("bg-purple-100/70", b === btn);
+        });
+        sound.playCoin();
+      });
+    });
+
     document.querySelectorAll(".btn-skin-jersey").forEach(btn => {
-      btn.addEventListener("click", (e) => {
+      btn.addEventListener("click", () => {
         const color = btn.getAttribute("data-color");
         const wardrobe = storage.getWardrobe();
         wardrobe.equipped.jerseyColor = color;
         storage.saveWardrobe(wardrobe);
         if (this.gameEngine) {
           this.gameEngine.player.setSkin(wardrobe.equipped);
+          this.gameEngine.multiplayer.broadcastPose(this.gameEngine.player);
         }
+        document.querySelectorAll(".btn-skin-jersey").forEach(b => {
+          b.classList.toggle("ring-2", b === btn);
+          b.classList.toggle("ring-purple-500", b === btn);
+          b.classList.toggle("bg-purple-100/70", b === btn);
+        });
         sound.playCoin();
       });
     });
@@ -473,6 +517,7 @@ class App {
         storage.saveWardrobe(wardrobe);
         if (this.gameEngine) {
           this.gameEngine.player.setSkin(wardrobe.equipped);
+          this.gameEngine.multiplayer.broadcastPose(this.gameEngine.player);
         }
         sound.playCoin();
       });
@@ -486,6 +531,7 @@ class App {
         storage.saveWardrobe(wardrobe);
         if (this.gameEngine) {
           this.gameEngine.player.setSkin(wardrobe.equipped);
+          this.gameEngine.multiplayer.broadcastPose(this.gameEngine.player);
         }
         sound.playCoin();
       });
@@ -553,10 +599,6 @@ class App {
     if (!this.gameEngine) {
       this.gameEngine = new GameEngine(this.gameCanvas, (zone) => this.handleZoneInteraction(zone));
 
-      // Apply saved wardrobe skin to player
-      const wardrobe = storage.getWardrobe();
-      this.gameEngine.player.setSkin(wardrobe.equipped);
-
       // Bind Virtual Touch D-Pad
       const dpad = {
         up: document.getElementById("dpad-up"),
@@ -567,6 +609,23 @@ class App {
       const actionBtn = document.getElementById("btn-action-a");
       this.gameEngine.controls.bindTouchButtons(dpad, actionBtn);
     }
+
+    // Apply saved wardrobe skin to player
+    const wardrobe = storage.getWardrobe();
+    this.gameEngine.player.setSkin(wardrobe.equipped);
+
+    // Apply identity for name tag & initialize multiplayer
+    if (this.currentStudent) {
+      this.gameEngine.player.setIdentity(this.currentStudent);
+      this.gameEngine.multiplayer.init(this.currentStudent);
+      this.gameEngine.multiplayer.onPeerCountChange = (count) => {
+        const badge = document.getElementById("badge-online-peers");
+        if (badge) {
+          badge.innerHTML = `<span>👥</span><span>ออนไลน์ ${count} คน</span>`;
+        }
+      };
+    }
+
     this.gameEngine.start();
   }
 
@@ -700,6 +759,33 @@ class App {
 
     if (checkKneepads) checkKneepads.checked = !!wardrobe.equipped.hasKneepads;
     if (checkPet) checkPet.checked = !!wardrobe.equipped.hasPet;
+
+    // Highlight active headwear
+    document.querySelectorAll(".btn-skin-headwear").forEach(btn => {
+      const hw = btn.getAttribute("data-headwear");
+      const isActive = hw === wardrobe.equipped.headwear;
+      btn.classList.toggle("ring-2", isActive);
+      btn.classList.toggle("ring-purple-500", isActive);
+      btn.classList.toggle("bg-purple-100/70", isActive);
+    });
+
+    // Highlight active outfit
+    document.querySelectorAll(".btn-skin-outfit").forEach(btn => {
+      const out = btn.getAttribute("data-outfit");
+      const isActive = out === wardrobe.equipped.outfit;
+      btn.classList.toggle("ring-2", isActive);
+      btn.classList.toggle("ring-purple-500", isActive);
+      btn.classList.toggle("bg-purple-100/70", isActive);
+    });
+
+    // Highlight active jersey color
+    document.querySelectorAll(".btn-skin-jersey").forEach(btn => {
+      const col = btn.getAttribute("data-color");
+      const isActive = col === wardrobe.equipped.jerseyColor;
+      btn.classList.toggle("ring-2", isActive);
+      btn.classList.toggle("ring-purple-500", isActive);
+      btn.classList.toggle("bg-purple-100/70", isActive);
+    });
 
     this.modalWardrobe.classList.remove("hidden");
   }
@@ -842,6 +928,13 @@ class App {
   async startActionCamSession() {
     this.showScreen("minigame");
     sound.ensureAudioContext();
+
+    if (this.gameEngine) {
+      this.gameEngine.pause();
+      if (this.gameEngine.multiplayer) {
+        this.gameEngine.multiplayer.pause();
+      }
+    }
 
     this.sessionActive = true;
     this.isCalibrated = false;
@@ -1179,7 +1272,12 @@ class App {
     if (this.cameraManager) this.cameraManager.stop();
 
     this.showScreen("game");
-    if (this.gameEngine) this.gameEngine.resume();
+    if (this.gameEngine) {
+      this.gameEngine.resume();
+      if (this.gameEngine.multiplayer) {
+        this.gameEngine.multiplayer.resume();
+      }
+    }
   }
 
   // --- IN-GAME NOTIFICATION TOAST ---

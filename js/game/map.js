@@ -1,30 +1,93 @@
 /**
  * map.js
- * 2D Top-Down Retro Pixel Art Gymnasium & Sports Arena (ZEP QUIZ Style).
+ * 2D Hybrid Retro Map: ZEP Fairy Tale Forest Camp & Volleyball Action Arena.
  * Features:
- * - 32x32 polished parquet wood plank floor with glossy sheen
- * - Delineated international volleyball court with attack lines & 2D pixel net
- * - Warm-up stretching mats with cute 2D pixel flame icon & animated pixel-dotted pulse
- * - Cardio running lane with cute 2D pixel sneaker/star icon & animated pixel-dotted pulse
- * - Volleyball stations (Bump, Set, Underhand Serve, Overhand Serve) with cute 2D pixel icons
- * - Coach Soon NPC with animated floating quest bubble '!'
- * - Championship podium with 2D pixel golden trophy & twinkling sparkles
+ * - Upper Zone: Fairy Tale Forest Camp & Podium (y: 0 - 360)
+ *   - Wooden "FINISH / CHAMPIONS" Billboard Stage
+ *   - 1st, 2nd, 3rd Place Podiums (🥇, 🥈, 🥉) with live top champion statues
+ *   - 20 Classroom Tree Stumps for live classmate gathering & seating
+ *   - Treehouse with ladder, wooden swing, pond with lily pads & garden crops
+ * - Middle Gateway: Wooden Archway & Cobblestone Path (y: 360 - 410)
+ * - Lower Zone: Polished Parquet Volleyball Arena (y: 410 - 740)
+ *   - Volleyball court lines, net, 6 exercise training stations
+ *   - Coach Soon NPC, Health Station & Hall of Fame
  */
 
 export class GymMap {
-  constructor(width, height) {
+  constructor(width = 360, height = 740) {
     this.width = width;
     this.height = height;
 
-    // Interactive Trigger Zones (Preserve exact IDs, types, and coordinates)
+    // Interactive Trigger Zones (Coordinates updated for expanded 740px height)
     this.zones = [
+      // --- UPPER CAMP ZONES ---
+      {
+        id: "zone_podium_stage",
+        type: "leaderboard",
+        name: "เวทีโพเดียมรับรางวัล (Victory Stage)",
+        x: 180,
+        y: 115,
+        radius: 45,
+        prompt: "[A] เปิดดูโพเดียมแชมเปี้ยน 🏆",
+        badge: "👑 แชมเปี้ยน"
+      },
+      {
+        id: "zone_treehouse",
+        type: "leaderboard",
+        name: "บ้านต้นไม้พักผ่อน (Treehouse)",
+        x: 305,
+        y: 75,
+        radius: 35,
+        prompt: "[A] ชมวิวบ้านต้นไม้ 🌲",
+        badge: "🏡 บ้านต้นไม้"
+      },
+
+      // --- LOWER GYM ARENA ZONES ---
+      {
+        id: "zone_coach",
+        type: "npc",
+        name: "ครูซูน (Teacher Soon)",
+        x: 180,
+        y: 450,
+        radius: 35,
+        prompt: "[A] คุยกับครูซูน 💬",
+        dialog: [
+          "ยินดีต้อนรับสู่ลานกิจกรรม PECLASS! ด้านบนคือลานโพเดียมและแคมป์รับรางวัล ส่วนด้านล่างคือสนามฝึกซ้อมวอลเลย์บอล",
+          "1. อันเดอร์บอล: แขนต้องเหยียดตึงเสมอ แล้วใช้แรงย่อ-ยืดจากข้อเข่า!",
+          "2. เซ็ตบอล: ยกมือขึ้นเหนือหน้าผาก กางนิ้วเป็นรูปถ้วย แล้วสปริงตัวผลักบอลขึ้นด้านบน!",
+          "3. เสิร์ฟมือล่าง & บน: เล็งเป้าหมายแล้วส่งบอลข้ามตาข่าย!",
+          "สะสมแต้ม XP ให้ติด 1 ใน 3 เพื่อขึ้นไปยืนบนโพเดียมทองคำด้านบนนะ!"
+        ]
+      },
+      {
+        id: "zone_stretching",
+        type: "exercise",
+        exerciseId: "stretch_neck",
+        name: "โซนยืดเหยียดกล้ามเนื้อ (Stretching 10 ท่า)",
+        x: 60,
+        y: 465,
+        radius: 38,
+        prompt: "[A] ท่ายืดเหยียดกล้ามเนื้อ 10 ท่า 🧘",
+        badge: "🧘 STRETCH"
+      },
+      {
+        id: "zone_warmup",
+        type: "exercise",
+        exerciseId: "dynamic_high_knees",
+        name: "โซนวอร์มอัพ Dynamic Warm-up (10 ท่า)",
+        x: 300,
+        y: 465,
+        radius: 38,
+        prompt: "[A] อบอุ่นร่างกาย Dynamic Warm-up 🔥",
+        badge: "🔥 WARM UP"
+      },
       {
         id: "zone_volleyball_bump",
         type: "exercise",
         exerciseId: "volleyball_bump",
         name: "สนามอันเดอร์บอล (Bump)",
-        x: 145,
-        y: 200,
+        x: 135,
+        y: 535,
         radius: 35,
         prompt: "[A] เริ่มภารกิจ: อันเดอร์บอล 🏐",
         badge: "🏐 อันเดอร์"
@@ -34,33 +97,11 @@ export class GymMap {
         type: "exercise",
         exerciseId: "volleyball_set",
         name: "สนามเซ็ตบอล (Set)",
-        x: 215,
-        y: 200,
+        x: 225,
+        y: 535,
         radius: 35,
         prompt: "[A] เริ่มภารกิจ: เซ็ตบอล 🙌",
         badge: "🙌 เซ็ตบอล"
-      },
-      {
-        id: "zone_stretching",
-        type: "exercise",
-        exerciseId: "stretch_neck",
-        name: "โซนยืดเหยียดกล้ามเนื้อ (Stretching 10 ท่า)",
-        x: 60,
-        y: 110,
-        radius: 38,
-        prompt: "[A] ท่ายืดเหยียดกล้ามเนื้อ 10 ท่า (Stretching) 🧘",
-        badge: "🧘 STRETCH"
-      },
-      {
-        id: "zone_warmup",
-        type: "exercise",
-        exerciseId: "dynamic_high_knees",
-        name: "โซนวอร์มอัพ Dynamic Warm-up (10 ท่า)",
-        x: 300,
-        y: 110,
-        radius: 38,
-        prompt: "[A] อบอุ่นร่างกาย Dynamic Warm-up (10 ท่า) 🔥",
-        badge: "🔥 WARM UP"
       },
       {
         id: "zone_volleyball_serve_under",
@@ -68,7 +109,7 @@ export class GymMap {
         exerciseId: "volleyball_serve_under",
         name: "สนามเสิร์ฟมือล่าง (Underhand Serve)",
         x: 135,
-        y: 280,
+        y: 635,
         radius: 35,
         prompt: "[A] เริ่มภารกิจ: เสิร์ฟมือล่าง 🎯",
         badge: "🎯 เสิร์ฟล่าง"
@@ -79,34 +120,17 @@ export class GymMap {
         exerciseId: "volleyball_serve_over",
         name: "สนามเสิร์ฟมือบน (Overhand Serve)",
         x: 225,
-        y: 280,
+        y: 635,
         radius: 35,
         prompt: "[A] เริ่มภารกิจ: เสิร์ฟมือบน ⚡",
         badge: "⚡ เสิร์ฟบน"
-      },
-      {
-        id: "zone_coach",
-        type: "npc",
-        name: "ครูซูน (Teacher Soon)",
-        x: 180,
-        y: 70,
-        radius: 35,
-        prompt: "[A] คุยกับครูซูน 💬",
-        dialog: [
-          "ยินดีต้อนรับนักเรียนทุกคนสู่คลาส PECLASS! ครูซูนจะพาพวกเรามาฝึกทักษะวอลเลย์บอลกัน",
-          "1. อันเดอร์บอล: แขนต้องเหยียดตึงเสมอ แล้วใช้แรงย่อ-ยืดจากข้อเข่า!",
-          "2. เซ็ตบอล: ยกมือขึ้นเหนือหน้าผาก กางนิ้วเป็นรูปถ้วย แล้วสปริงตัวผลักบอลขึ้นด้านบน!",
-          "3. เสิร์ฟมือล่าง: ถือบอลระดับเอว ง้างแขนไปข้างหลังแล้วเหวี่ยงสวิงเสยส่งบอลข้ามเน็ต!",
-          "4. เสิร์ฟมือบน: ยกศอกง้างระดับใบหู แล้วกระโดดฟาดบอลที่จุดสูงสุดเหนือศีรษะ!",
-          "พร้อมแล้วเลือกจุดฝึกซ้อมในสนามวอลเลย์บอลได้เลยนะ!"
-        ]
       },
       {
         id: "zone_trophy",
         type: "leaderboard",
         name: "หอเกียรติยศ (Leaderboard)",
         x: 60,
-        y: 280,
+        y: 640,
         radius: 35,
         prompt: "[A] ดูอันดับคะแนน 🏆",
         badge: "🏆 อันดับ"
@@ -116,16 +140,49 @@ export class GymMap {
         type: "health",
         name: "ห้องตรวจสุขภาพ & วัด BMI (Health Room)",
         x: 300,
-        y: 280,
+        y: 640,
         radius: 35,
         prompt: "[A] ตรวจสุขภาพ & วัดค่า BMI 🏥",
         badge: "🏥 วัด BMI"
       }
     ];
 
-    // Pre-create offscreen 32x32 polished wood tile pattern
-    this.woodPatternCanvas = null;
+    // Classroom Tree Stumps Grid (20 seats in Camp Zone)
+    this.stumps = [];
+    this.initClassroomStumps();
+
+    // Wood pattern for gym floor
+    this.woodPattern = null;
     this.createWoodPattern();
+
+    // Top Champions data for rendering on podiums
+    this.topChampions = [];
+  }
+
+  setTopChampions(list) {
+    if (Array.isArray(list)) {
+      this.topChampions = list.slice(0, 3);
+    }
+  }
+
+  initClassroomStumps() {
+    this.stumps = [];
+    const rows = 4;
+    const cols = 5;
+    const startX = 70;
+    const startY = 175;
+    const spacingX = 55;
+    const spacingY = 38;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        this.stumps.push({
+          x: startX + c * spacingX,
+          y: startY + r * spacingY,
+          radius: 12
+        });
+      }
+    }
   }
 
   createWoodPattern() {
@@ -134,57 +191,31 @@ export class GymMap {
     pCanvas.height = 32;
     const pCtx = pCanvas.getContext("2d");
 
-    // Base polished maple wood
     pCtx.fillStyle = "#E5A962";
     pCtx.fillRect(0, 0, 32, 32);
 
-    // Staggered planks (16px high, alternating offsets)
-    // Plank 1: y 0 to 16
     pCtx.fillStyle = "#EDBA76";
     pCtx.fillRect(0, 0, 16, 16);
     pCtx.fillStyle = "#D99B52";
     pCtx.fillRect(16, 0, 16, 16);
 
-    // Plank 2: y 16 to 32 (staggered)
     pCtx.fillStyle = "#D99B52";
     pCtx.fillRect(0, 16, 24, 16);
     pCtx.fillStyle = "#EDBA76";
     pCtx.fillRect(24, 16, 8, 16);
 
-    // 1-pixel polished specular highlight lines
-    pCtx.fillStyle = "#F8D49E";
-    pCtx.fillRect(0, 1, 32, 1);
-    pCtx.fillRect(0, 17, 32, 1);
-
-    // 1-pixel plank grain flecks
-    pCtx.fillStyle = "#C8863A";
-    pCtx.fillRect(4, 5, 8, 1);
-    pCtx.fillRect(20, 9, 6, 1);
-    pCtx.fillRect(8, 22, 10, 1);
-    pCtx.fillRect(24, 26, 5, 1);
-
-    // 1-pixel dark seam lines between planks
-    pCtx.fillStyle = "#A36622";
+    pCtx.fillStyle = "rgba(100, 50, 0, 0.15)";
     pCtx.fillRect(0, 15, 32, 1);
     pCtx.fillRect(0, 31, 32, 1);
     pCtx.fillRect(15, 0, 1, 16);
     pCtx.fillRect(23, 16, 1, 16);
 
-    // Subtle 1-pixel peg nail dots
-    pCtx.fillStyle = "#804810";
-    pCtx.fillRect(1, 2, 1, 1);
-    pCtx.fillRect(17, 2, 1, 1);
-    pCtx.fillRect(1, 18, 1, 1);
-    pCtx.fillRect(25, 18, 1, 1);
-
-    this.woodPatternCanvas = pCanvas;
+    this.woodPattern = pCanvas;
   }
 
-  // Check if player is near any interactive zone
   checkNearbyZone(playerX, playerY) {
-    const pCenter = { x: playerX + 12, y: playerY + 16 };
     for (const zone of this.zones) {
-      const dist = Math.hypot(pCenter.x - zone.x, pCenter.y - zone.y);
+      const dist = Math.hypot(playerX - zone.x, playerY - zone.y);
       if (dist <= zone.radius) {
         return zone;
       }
@@ -192,611 +223,553 @@ export class GymMap {
     return null;
   }
 
-  draw(ctx) {
-    const now = Date.now();
+  draw(ctx, PlayerClass) {
+    // ==========================================
+    // 1. UPPER ZONE: FAIRY TALE FOREST CAMP (y: 0 - 370)
+    // ==========================================
+    this.drawForestCamp(ctx, PlayerClass);
 
-    // ----------------------------------------------------
-    // 1. GYM COURT WOOD FLOOR (32x32 Polished Plank Grid)
-    // ----------------------------------------------------
-    if (this.woodPatternCanvas) {
-      const pattern = ctx.createPattern(this.woodPatternCanvas, "repeat");
-      ctx.fillStyle = pattern;
-      ctx.fillRect(0, 0, this.width, this.height);
-    } else {
-      ctx.fillStyle = "#D99B52";
-      ctx.fillRect(0, 0, this.width, this.height);
+    // ==========================================
+    // 2. MIDDLE GATEWAY: ARCHWAY & PATH (y: 350 - 410)
+    // ==========================================
+    this.drawConnectingGateway(ctx);
+
+    // ==========================================
+    // 3. LOWER ZONE: VOLLEYBALL ARENA (y: 410 - 740)
+    // ==========================================
+    this.drawGymArena(ctx);
+  }
+
+  // --- FAIRY TALE FOREST CAMP & PODIUMS ---
+  drawForestCamp(ctx, PlayerClass) {
+    ctx.save();
+
+    // 1. Lush Pastel Green Grass Background
+    ctx.fillStyle = "#72B347";
+    ctx.fillRect(0, 0, this.width, 365);
+
+    // Subtle grassy texture dots & clovers
+    ctx.fillStyle = "#65A03D";
+    for (let x = 15; x < this.width; x += 35) {
+      for (let y = 15; y < 350; y += 30) {
+        ctx.fillRect(x + (y % 20), y, 2, 2);
+        ctx.fillRect(x + (y % 20) + 2, y - 1, 2, 2);
+      }
     }
 
-    // Outer gym wall perimeter border
-    ctx.strokeStyle = "#804810";
-    ctx.lineWidth = 4;
-    ctx.strokeRect(2, 2, this.width - 4, this.height - 4);
+    // 2. Wooden Perimeter Fence with Logs
+    ctx.fillStyle = "#854D0E";
+    ctx.fillRect(10, 15, this.width - 20, 4);
+    for (let fx = 15; fx < this.width; fx += 25) {
+      ctx.fillRect(fx, 11, 4, 12);
+    }
 
-    // Polished floor gloss reflection (soft diagonal light beam)
-    ctx.save();
-    const glossGrad = ctx.createLinearGradient(0, 0, this.width, this.height);
-    glossGrad.addColorStop(0, "rgba(255, 255, 255, 0.08)");
-    glossGrad.addColorStop(0.3, "rgba(255, 255, 255, 0.16)");
-    glossGrad.addColorStop(0.6, "rgba(255, 255, 255, 0.04)");
-    glossGrad.addColorStop(1, "rgba(255, 255, 255, 0.12)");
-    ctx.fillStyle = glossGrad;
-    ctx.fillRect(4, 4, this.width - 8, this.height - 8);
+    // 3. Treehouse on Top-Right
+    this.drawTreehouse(ctx, 305, 55);
+
+    // 4. Wooden Swing on Top-Left
+    this.drawSwing(ctx, 45, 55);
+
+    // 5. Pond with animated water ripples & lily pad
+    this.drawPond(ctx, 310, 200);
+
+    // 6. Cute Garden Patch / Veggies on Left
+    this.drawGardenPatch(ctx, 25, 200);
+
+    // 7. BIG WOODEN "FINISH / VICTORY STAGE" SIGNBOARD
+    this.drawStageSignboard(ctx, 180, 52);
+
+    // 8. 1ST, 2ND, 3RD PLACE PODIUM STANDS
+    this.drawPodiums(ctx, PlayerClass);
+
+    // 9. CLASSROOM TREE STUMPS (Audience Grid)
+    this.drawStumps(ctx);
+
     ctx.restore();
+  }
 
-    // ----------------------------------------------------
-    // 2. VOLLEYBALL COURT (ZEP International Arena)
-    // ----------------------------------------------------
-    const courtX = 100;
-    const courtY = 145;
-    const courtW = 160;
-    const courtH = 110;
+  drawStageSignboard(ctx, cx, cy) {
+    ctx.save();
+    // Shadow
+    ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+    ctx.beginPath();
+    ctx.roundRect(cx - 65, cy - 2, 134, 44, 8);
+    ctx.fill();
 
-    // Court safety outer border (Sky blue apron)
+    // Wooden Board Frame
+    ctx.fillStyle = "#78350F";
+    ctx.beginPath();
+    ctx.roundRect(cx - 67, cy - 5, 134, 42, 8);
+    ctx.fill();
+
+    // Inner Board (Dark Slate Chalkboard)
+    ctx.fillStyle = "#1E3A2F"; // Dark forest chalkboard green
+    ctx.fillRect(cx - 62, cy, 124, 32);
+
+    // Golden Board Text
+    ctx.fillStyle = "#FEF08A";
+    ctx.font = "bold 11px 'Press Start 2P', monospace";
+    ctx.textAlign = "center";
+    ctx.fillText("FINISH", cx, cy + 16);
+
+    ctx.fillStyle = "#86EFAC";
+    ctx.font = "bold 8px 'Prompt', sans-serif";
+    ctx.fillText("★ ลานเกียรติยศแชมเปี้ยน ★", cx, cy + 27);
+
+    // Green ivy / vines on corners
+    ctx.fillStyle = "#22C55E";
+    ctx.beginPath();
+    ctx.arc(cx - 62, cy, 5, 0, Math.PI * 2);
+    ctx.arc(cx + 62, cy, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  drawPodiums(ctx, PlayerClass) {
+    // 1st Place Podium (Center - Gold)
+    this.drawSinglePodium(ctx, 180, 115, 38, 24, "#F59E0B", "#B45309", "1", "🥇");
+
+    // 2nd Place Podium (Left - Silver)
+    this.drawSinglePodium(ctx, 125, 122, 34, 18, "#94A3B8", "#475569", "2", "🥈");
+
+    // 3rd Place Podium (Right - Bronze)
+    this.drawSinglePodium(ctx, 235, 126, 34, 14, "#EA580C", "#9A3412", "3", "🥉");
+
+    // Render Real Top 3 Champion Avatars on the Podiums!
+    if (PlayerClass && this.topChampions.length > 0) {
+      const c1 = this.topChampions[0];
+      const c2 = this.topChampions[1];
+      const c3 = this.topChampions[2];
+
+      if (c1) {
+        PlayerClass.renderAvatar(ctx, 180 - 12, 115 - 34, {
+          direction: "down",
+          name: c1.name,
+          studentNumber: c1.studentNumber,
+          room: c1.room,
+          isRank1: true,
+          outfit: "champion_gold",
+          headwear: "crown",
+          hasPet: true,
+          petFloatTimer: Date.now() / 200
+        });
+      }
+
+      if (c2) {
+        PlayerClass.renderAvatar(ctx, 125 - 12, 122 - 32, {
+          direction: "down",
+          name: c2.name,
+          studentNumber: c2.studentNumber,
+          room: c2.room,
+          isRank2: true,
+          outfit: "witch_robe",
+          headwear: "witch_hat"
+        });
+      }
+
+      if (c3) {
+        PlayerClass.renderAvatar(ctx, 235 - 12, 126 - 30, {
+          direction: "down",
+          name: c3.name,
+          studentNumber: c3.studentNumber,
+          room: c3.room,
+          isRank3: true,
+          outfit: "bear_onesie",
+          headwear: "bear_hood"
+        });
+      }
+    }
+  }
+
+  drawSinglePodium(ctx, cx, cy, w, h, topColor, sideColor, num, medal) {
+    ctx.save();
+    // Shadow
+    ctx.fillStyle = "rgba(0,0,0,0.3)";
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + h / 2 + 2, w / 2 + 4, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Side 3D base
+    ctx.fillStyle = sideColor;
+    ctx.beginPath();
+    ctx.roundRect(cx - w / 2, cy - h / 2 + 5, w, h, 6);
+    ctx.fill();
+
+    // Top surface
+    ctx.fillStyle = topColor;
+    ctx.beginPath();
+    ctx.roundRect(cx - w / 2, cy - h / 2, w, h - 3, 6);
+    ctx.fill();
+
+    // Number & Medal
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 9px 'Press Start 2P', monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(num, cx, cy);
+
+    ctx.restore();
+  }
+
+  drawStumps(ctx) {
+    ctx.save();
+    this.stumps.forEach((s) => {
+      // Stump shadow
+      ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
+      ctx.beginPath();
+      ctx.ellipse(s.x, s.y + 6, s.radius + 2, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Stump 3D bark body
+      ctx.fillStyle = "#78350F";
+      ctx.beginPath();
+      ctx.roundRect(s.x - s.radius, s.y - 4, s.radius * 2, 12, 6);
+      ctx.fill();
+
+      // Top wood cut surface
+      ctx.fillStyle = "#FDE68A"; // Pale wood
+      ctx.beginPath();
+      ctx.ellipse(s.x, s.y - 4, s.radius, s.radius * 0.65, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Tree rings
+      ctx.strokeStyle = "#D97706";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(s.x, s.y - 4, s.radius * 0.6, s.radius * 0.38, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.ellipse(s.x, s.y - 4, s.radius * 0.25, s.radius * 0.15, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  drawTreehouse(ctx, cx, cy) {
+    ctx.save();
+    // Tree trunk & foliage
+    ctx.fillStyle = "#78350F";
+    ctx.fillRect(cx - 8, cy, 16, 35);
+
+    ctx.fillStyle = "#15803D";
+    ctx.beginPath();
+    ctx.arc(cx, cy - 15, 24, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Wooden hut
+    ctx.fillStyle = "#B45309";
+    ctx.fillRect(cx - 14, cy - 20, 28, 22);
+
+    // Roof
+    ctx.fillStyle = "#DC2626"; // Red roof
+    ctx.beginPath();
+    ctx.moveTo(cx - 18, cy - 20);
+    ctx.lineTo(cx, cy - 34);
+    ctx.lineTo(cx + 18, cy - 20);
+    ctx.closePath();
+    ctx.fill();
+
+    // Hut window
+    ctx.fillStyle = "#FEF08A";
+    ctx.fillRect(cx - 4, cy - 14, 8, 8);
+
+    // Wooden ladder
+    ctx.strokeStyle = "#92400E";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx - 5, cy + 2);
+    ctx.lineTo(cx - 5, cy + 32);
+    ctx.moveTo(cx + 5, cy + 2);
+    ctx.lineTo(cx + 5, cy + 32);
+    for (let ly = cy + 6; ly < cy + 32; ly += 6) {
+      ctx.moveTo(cx - 5, ly);
+      ctx.lineTo(cx + 5, ly);
+    }
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  drawSwing(ctx, cx, cy) {
+    ctx.save();
+    // Tree
+    ctx.fillStyle = "#15803D";
+    ctx.beginPath();
+    ctx.arc(cx, cy - 10, 25, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#78350F";
+    ctx.fillRect(cx - 8, cy + 5, 16, 30);
+
+    // Wooden Branch
+    ctx.fillRect(cx - 25, cy + 5, 30, 5);
+
+    // Swing ropes & seat
+    ctx.strokeStyle = "#D97706";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - 20, cy + 8);
+    ctx.lineTo(cx - 20, cy + 28);
+    ctx.moveTo(cx - 10, cy + 8);
+    ctx.lineTo(cx - 10, cy + 28);
+    ctx.stroke();
+
+    // Wooden seat
+    ctx.fillStyle = "#B45309";
+    ctx.fillRect(cx - 23, cy + 28, 16, 4);
+
+    ctx.restore();
+  }
+
+  drawPond(ctx, cx, cy) {
+    ctx.save();
+    // Water
     ctx.fillStyle = "#38BDF8";
-    ctx.fillRect(courtX - 6, courtY - 6, courtW + 12, courtH + 12);
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 26, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.strokeStyle = "#0284C7";
     ctx.lineWidth = 2;
-    ctx.strokeRect(courtX - 6, courtY - 6, courtW + 12, courtH + 12);
+    ctx.stroke();
 
-    // Inner Court Surface (Vibrant Warm Amber / Orange)
-    ctx.fillStyle = "#FB923C";
-    ctx.fillRect(courtX, courtY, courtW, courtH);
-
-    // 2D Pixel court floor plank lines
-    ctx.strokeStyle = "rgba(194, 65, 12, 0.35)";
+    // Water ripple
+    const ripple = (Date.now() / 300) % 15;
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
     ctx.lineWidth = 1;
-    for (let py = courtY + 16; py < courtY + courtH; py += 16) {
-      ctx.beginPath();
-      ctx.moveTo(courtX, py);
-      ctx.lineTo(courtX + courtW, py);
-      ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 10 + ripple, 6 + ripple * 0.6, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Lily pad
+    ctx.fillStyle = "#16A34A";
+    ctx.beginPath();
+    ctx.arc(cx - 8, cy - 4, 6, 0, Math.PI * 1.8);
+    ctx.fill();
+
+    // Pink Lotus flower
+    ctx.fillStyle = "#F472B6";
+    ctx.beginPath();
+    ctx.arc(cx - 8, cy - 4, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  drawGardenPatch(ctx, cx, cy) {
+    ctx.save();
+    // Soil
+    ctx.fillStyle = "#854D0E";
+    ctx.beginPath();
+    ctx.roundRect(cx - 15, cy - 15, 30, 30, 6);
+    ctx.fill();
+
+    // Pumpkins / Veggies
+    for (let ox of [-8, 8]) {
+      for (let oy of [-8, 8]) {
+        ctx.fillStyle = "#EA580C"; // Pumpkin orange
+        ctx.beginPath();
+        ctx.arc(cx + ox, cy + oy, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#16A34A"; // Stem
+        ctx.fillRect(cx + ox - 1, cy + oy - 7, 2, 3);
+      }
+    }
+    ctx.restore();
+  }
+
+  // --- CONNECTING ARCHWAY & PATH ---
+  drawConnectingGateway(ctx) {
+    ctx.save();
+    const gy = 365;
+
+    // Cobblestone pathway
+    ctx.fillStyle = "#94A3B8";
+    ctx.fillRect(140, gy - 15, 80, 50);
+
+    ctx.fillStyle = "#CBD5E1";
+    for (let py = gy - 12; py < gy + 32; py += 12) {
+      for (let px = 145; px < 215; px += 18) {
+        ctx.beginPath();
+        ctx.roundRect(px, py, 14, 8, 3);
+        ctx.fill();
+      }
     }
 
-    // Boundary Lines (Solid 2px Crisp Pure White)
+    // Wooden Torii / Archway Gate Pillars
+    ctx.fillStyle = "#78350F";
+    ctx.fillRect(130, gy - 10, 10, 42); // Left pillar
+    ctx.fillRect(220, gy - 10, 10, 42); // Right pillar
+
+    // Archway Roof / Crossbeam
+    ctx.fillStyle = "#B45309";
+    ctx.fillRect(122, gy - 16, 116, 8);
+    ctx.fillStyle = "#92400E";
+    ctx.fillRect(126, gy - 20, 108, 5);
+
+    // Archway Signboard
+    ctx.fillStyle = "#FEF3C7";
+    ctx.fillRect(145, gy - 12, 70, 10);
+    ctx.fillStyle = "#92400E";
+    ctx.font = "bold 7px 'Prompt', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("สนามวอลเลย์บอล ▼", 180, gy - 4.5);
+
+    // Animated Arrow Indicator pointing down to court
+    const arrowBounce = Math.sin(Date.now() / 180) * 3;
+    ctx.fillStyle = "#F59E0B";
+    ctx.beginPath();
+    ctx.moveTo(180, gy + 15 + arrowBounce);
+    ctx.lineTo(185, gy + 10 + arrowBounce);
+    ctx.lineTo(175, gy + 10 + arrowBounce);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  // --- VOLLEYBALL ARENA (y: 400 - 740) ---
+  drawGymArena(ctx) {
+    ctx.save();
+
+    // 1. Polished Wood Floor Pattern
+    if (this.woodPattern) {
+      const pattern = ctx.createPattern(this.woodPattern, "repeat");
+      ctx.fillStyle = pattern;
+      ctx.fillRect(0, 400, this.width, 340);
+    } else {
+      ctx.fillStyle = "#E5A962";
+      ctx.fillRect(0, 400, this.width, 340);
+    }
+
+    // Border walls around gym
+    ctx.fillStyle = "#0F172A";
+    ctx.fillRect(0, 396, this.width, 4); // Top gym border
+    ctx.fillRect(0, 396, 6, 344); // Left wall
+    ctx.fillRect(this.width - 6, 396, 6, 344); // Right wall
+    ctx.fillRect(0, 736, this.width, 4); // Bottom border
+
+    // 2. Volleyball Court Boundary Lines (Official Orange Infield)
+    const courtX = 85;
+    const courtY = 475;
+    const courtW = 190;
+    const courtH = 210;
+
+    // Orange Court Floor
+    ctx.fillStyle = "rgba(255, 138, 0, 0.28)";
+    ctx.fillRect(courtX, courtY, courtW, courtH);
+
+    // White Boundary Lines
     ctx.strokeStyle = "#FFFFFF";
     ctx.lineWidth = 2;
     ctx.strokeRect(courtX, courtY, courtW, courtH);
 
-    // Center Line
+    // Center Attack Lines & Center Net
     const netY = courtY + courtH / 2;
     ctx.beginPath();
-    ctx.moveTo(courtX, netY);
-    ctx.lineTo(courtX + courtW, netY);
+    ctx.moveTo(courtX, courtY + 45); // Attack line top
+    ctx.lineTo(courtX + courtW, courtY + 45);
+    ctx.moveTo(courtX, courtY + courtH - 45); // Attack line bottom
+    ctx.lineTo(courtX + courtW, courtY + courtH - 45);
     ctx.stroke();
 
-    // 3-Meter Attack Lines (Front Zone)
-    ctx.save();
-    ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
-    ctx.beginPath();
-    // Top side attack line
-    ctx.moveTo(courtX, netY - 24);
-    ctx.lineTo(courtX + courtW, netY - 24);
-    // Bottom side attack line
-    ctx.moveTo(courtX, netY + 24);
-    ctx.lineTo(courtX + courtW, netY + 24);
-    ctx.stroke();
-    ctx.restore();
+    // 3. Volleyball Net (Center Net at y = 580)
+    ctx.fillStyle = "#0F172A"; // Net posts
+    ctx.fillRect(courtX - 6, netY - 5, 6, 10);
+    ctx.fillRect(courtX + courtW, netY - 5, 6, 10);
 
-    // ----------------------------------------------------
-    // 3. 2D TOP-DOWN VOLLEYBALL NET & POSTS
-    // ----------------------------------------------------
-    // Shadow under net
-    ctx.fillStyle = "rgba(15, 23, 42, 0.25)";
-    ctx.fillRect(courtX - 4, netY + 2, courtW + 8, 3);
-
-    // Net mesh (2D pixel cross-hatch)
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(courtX, netY - 2, courtW, 4);
-
-    ctx.strokeStyle = "#334155";
-    ctx.lineWidth = 1;
-    for (let nx = courtX; nx <= courtX + courtW; nx += 8) {
-      ctx.beginPath();
-      ctx.moveTo(nx, netY - 2);
-      ctx.lineTo(nx, netY + 2);
-      ctx.stroke();
-    }
-
-    // Antennae (Red & White striped rods at sidelines)
-    // Left antenna
-    this.drawAntenna(ctx, courtX + 2, netY);
-    // Right antenna
-    this.drawAntenna(ctx, courtX + courtW - 4, netY);
-
-    // Metal net posts with blue safety padding pads
-    this.drawNetPost(ctx, courtX - 8, netY);
-    this.drawNetPost(ctx, courtX + courtW + 2, netY);
-
-    // ----------------------------------------------------
-    // 4. WARM-UP ZONE (Stretching Mats & Cute Pixel Flame)
-    // ----------------------------------------------------
-    this.drawWarmupMats(ctx, 35, 78, 52, 64);
-
-    // ----------------------------------------------------
-    // 5. CARDIO TRACK ZONE (Tartan Lane & Pixel Sneaker)
-    // ----------------------------------------------------
-    this.drawCardioTrack(ctx, 273, 78, 52, 64);
-
-    // ----------------------------------------------------
-    // 6. TROPHY PODIUM (Leaderboard Stand)
-    // ----------------------------------------------------
-    this.drawTrophyPodium(ctx, 45, 265);
-
-    // ----------------------------------------------------
-    // 7. COACH SOON NPC (Top Center)
-    // ----------------------------------------------------
-    this.drawCoach(ctx, 180, 68);
-
-    // ----------------------------------------------------
-    // 8. INTERACTIVE ZONE MARKERS (Cute 2D Pixel Art Icons)
-    // ----------------------------------------------------
-    this.drawZoneMarkers(ctx, now);
-  }
-
-  drawAntenna(ctx, x, y) {
-    // Red & white 2px striped rod
-    ctx.fillStyle = "#EF4444";
-    ctx.fillRect(x, y - 5, 2, 3);
-    ctx.fillRect(x, y + 2, 2, 3);
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(x, y - 2, 2, 4);
-  }
-
-  drawNetPost(ctx, x, y) {
-    // Base floor plate
-    ctx.fillStyle = "#1E293B";
-    ctx.fillRect(x - 1, y - 5, 8, 10);
-    // Safety padding (Blue)
-    ctx.fillStyle = "#2563EB";
-    ctx.fillRect(x, y - 4, 6, 8);
-    // Highlight
-    ctx.fillStyle = "#60A5FA";
-    ctx.fillRect(x + 1, y - 3, 2, 6);
-  }
-
-  drawWarmupMats(ctx, x, y, w, h) {
-    // Floor area border
-    ctx.fillStyle = "#0F766E";
-    ctx.fillRect(x - 2, y - 2, w + 4, h + 4);
-
-    // 2 Pastel Green / Mint Foam Mats side-by-side
-    const matW = (w - 4) / 2;
-    for (let i = 0; i < 2; i++) {
-      const mx = x + i * (matW + 4);
-      ctx.fillStyle = "#10B981";
-      ctx.fillRect(mx, y, matW, h);
-      ctx.fillStyle = "#34D399";
-      ctx.fillRect(mx + 1, y + 1, matW - 2, h - 2);
-
-      // Ribbed mat lines
-      ctx.strokeStyle = "#059669";
-      ctx.lineWidth = 1;
-      for (let my = y + 8; my < y + h - 4; my += 8) {
-        ctx.beginPath();
-        ctx.moveTo(mx + 3, my);
-        ctx.lineTo(mx + matW - 3, my);
-        ctx.stroke();
-      }
-    }
-
-    // Mini Gym Towel & Water Bottle
-    ctx.fillStyle = "#38BDF8";
-    ctx.fillRect(x + 3, y + h - 14, 8, 10);
-    ctx.fillStyle = "#F8FAFC";
-    ctx.fillRect(x + 15, y + h - 12, 4, 8);
-    ctx.fillStyle = "#F59E0B";
-    ctx.fillRect(x + 16, y + h - 14, 2, 2);
-
-    // Pixel Pill Tag
-    this.drawPixelPillBadge(ctx, x + w / 2, y + 10, "STRETCH", "#065F46", "#D1FAE5");
-  }
-
-  drawCardioTrack(ctx, x, y, w, h) {
-    // Terracotta Running Track Base
-    ctx.fillStyle = "#991B1B";
-    ctx.fillRect(x - 2, y - 2, w + 4, h + 4);
-    ctx.fillStyle = "#DC2626";
-    ctx.fillRect(x, y, w, h);
-
-    // Running lane lines
-    ctx.strokeStyle = "#FFFFFF";
+    // Net mesh
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(x + w / 2, y);
-    ctx.lineTo(x + w / 2, y + h);
+    ctx.moveTo(courtX - 6, netY);
+    ctx.lineTo(courtX + courtW + 6, netY);
     ctx.stroke();
 
-    // Starting line block markings
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(x + 4, y + h - 8, w / 2 - 8, 3);
-    ctx.fillRect(x + w / 2 + 4, y + h - 8, w / 2 - 8, 3);
+    // Net Antennae (Red/White poles)
+    ctx.fillStyle = "#EF4444";
+    ctx.fillRect(courtX + 10, netY - 14, 2, 14);
+    ctx.fillRect(courtX + courtW - 12, netY - 14, 2, 14);
 
-    // Lane Numbers in 8-bit style
-    ctx.fillStyle = "#FEE2E2";
-    ctx.font = "8px 'Press Start 2P', monospace";
-    ctx.textAlign = "center";
-    ctx.fillText("1", x + w / 4, y + h - 14);
-    ctx.fillText("2", x + (w * 3) / 4, y + h - 14);
-
-    // Pixel Pill Tag
-    this.drawPixelPillBadge(ctx, x + w / 2, y + 10, "WARM UP", "#7F1D1D", "#FEE2E2");
-  }
-
-  drawTrophyPodium(ctx, x, y) {
-    // Wooden & Gold Podium Base
-    ctx.fillStyle = "#1E293B";
-    ctx.fillRect(x - 2, y + 10, 34, 16);
-    ctx.fillStyle = "#334155";
-    ctx.fillRect(x, y + 8, 30, 16);
-
-    // Gold trim band
-    ctx.fillStyle = "#F59E0B";
-    ctx.fillRect(x, y + 8, 30, 3);
-
-    // 2D Pixel Golden Trophy Cup
-    const tx = x + 15;
-    const ty = y - 2;
-
-    // Trophy Handles
-    ctx.fillStyle = "#D97706";
-    ctx.fillRect(tx - 10, ty + 1, 3, 6);
-    ctx.fillRect(tx + 7, ty + 1, 3, 6);
-
-    // Trophy Cup Body
-    ctx.fillStyle = "#FBBF24";
-    ctx.fillRect(tx - 7, ty, 14, 8);
-    ctx.fillStyle = "#FDE68A";
-    ctx.fillRect(tx - 6, ty + 1, 4, 6); // Golden reflection highlight
-
-    // Trophy Stem & Base
-    ctx.fillStyle = "#D97706";
-    ctx.fillRect(tx - 2, ty + 8, 4, 4);
-    ctx.fillStyle = "#F59E0B";
-    ctx.fillRect(tx - 5, ty + 12, 10, 3);
-
-    // Twinkling sparkle star ⭐
-    const sparkle = (Math.sin(Date.now() / 150) + 1) / 2;
-    if (sparkle > 0.4) {
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(tx + 4, ty - 3, 2, 2);
-      ctx.fillRect(tx + 3, ty - 2, 4, 1);
-      ctx.fillRect(tx + 4, ty - 4, 1, 4);
-    }
-
-    // Pill label
-    this.drawPixelPillBadge(ctx, x + 15, y + 27, "RANK", "#78350F", "#FEF3C7");
-  }
-
-  drawCoach(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-
-    // Idle breathing bounce
-    const idleBounce = Math.sin(Date.now() / 350) > 0 ? 1 : 0;
-
-    // Shadow underneath Coach
-    ctx.fillStyle = "rgba(15, 23, 42, 0.28)";
-    ctx.beginPath();
-    ctx.ellipse(0, 16, 11, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Shoes
-    ctx.fillStyle = "#0F172A";
-    ctx.fillRect(-7, 12, 5, 4);
-    ctx.fillRect(2, 12, 5, 4);
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(-7, 11, 4, 2);
-    ctx.fillRect(2, 11, 4, 2);
-
-    // Dark Tracksuit Pants with white side stripes
-    ctx.fillStyle = "#1E293B";
-    ctx.fillRect(-7, 4, 14, 8);
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(-7, 4, 1, 8);
-    ctx.fillRect(6, 4, 1, 8);
-
-    // Tracksuit Jacket (KU Royal Blue)
-    ctx.fillStyle = "#1D4ED8";
-    ctx.fillRect(-8, -6 + idleBounce, 16, 11);
-    ctx.fillStyle = "#3B82F6";
-    ctx.fillRect(-6, -6 + idleBounce, 12, 3); // Shoulder highlight
-
-    // White Center Zip & Collar
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(-1, -6 + idleBounce, 2, 11);
-    ctx.fillRect(-4, -6 + idleBounce, 8, 2);
-
-    // Silver Whistle on necklace
-    ctx.fillStyle = "#94A3B8";
-    ctx.fillRect(-1, -1 + idleBounce, 2, 3);
-    ctx.fillStyle = "#F59E0B";
-    ctx.fillRect(-2, -3 + idleBounce, 4, 1);
-
-    // Face / Skin
-    ctx.fillStyle = "#FBD38D";
-    ctx.fillRect(-5, -13 + idleBounce, 10, 7);
-
-    // Friendly 2D Pixel Eyes & Smile
-    ctx.fillStyle = "#0F172A";
-    ctx.fillRect(-4, -10 + idleBounce, 2, 2);
-    ctx.fillRect(2, -10 + idleBounce, 2, 2);
-    ctx.fillStyle = "#C2410C";
-    ctx.fillRect(-1, -8 + idleBounce, 2, 1);
-
-    // KU Coach Sports Cap (Green Visor)
-    ctx.fillStyle = "#006837";
-    ctx.fillRect(-6, -17 + idleBounce, 12, 5);
-    ctx.fillStyle = "#047857";
-    ctx.fillRect(-8, -13 + idleBounce, 16, 2); // Cap visor forward
-
-    // ----------------------------------------------------
-    // Animated Floating Quest Bubble '!' (ZEP QUIZ Style)
-    // ----------------------------------------------------
-    const floatY = Math.sin(Date.now() / 200) * 2.5;
-    const bubbleY = -28 + floatY;
-
-    // Speech bubble background
-    ctx.fillStyle = "#FFFFFF";
-    ctx.beginPath();
-    ctx.arc(0, bubbleY, 8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "#EF4444";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    // Bubble pointer tail
-    ctx.fillStyle = "#FFFFFF";
-    ctx.beginPath();
-    ctx.moveTo(-3, bubbleY + 6);
-    ctx.lineTo(3, bubbleY + 6);
-    ctx.lineTo(0, bubbleY + 10);
-    ctx.closePath();
-    ctx.fill();
-
-    // Red Exclamation Mark '!'
-    ctx.fillStyle = "#DC2626";
-    ctx.font = "bold 9px 'Press Start 2P', monospace";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("!", 0, bubbleY);
+    // 4. Exercise Mats & Trigger Zones
+    this.drawTrainingStations(ctx);
 
     ctx.restore();
   }
 
-  drawZoneMarkers(ctx, now) {
+  drawTrainingStations(ctx) {
+    ctx.save();
+    const time = Date.now();
+    const pulse = 0.8 + Math.sin(time / 200) * 0.2;
+
     this.zones.forEach((z) => {
-      // Skip coach and trophy (drawn separately with customized models)
-      if (z.id === "zone_coach" || z.id === "zone_trophy") return;
+      if (z.y < 400) return; // Skip upper zones, handled separately
 
-      const pulse = Math.sin(now / 200) * 2;
-      const rotOffset = (now / 60) % 360;
-
-      // 1. Subtle Animated Pixel-Dotted Circle Outline
       ctx.save();
-      ctx.setLineDash([4, 4]);
-      ctx.lineDashOffset = -now / 50;
+      // Glowing Station Circle
+      let glowColor = "rgba(99, 102, 241, 0.45)"; // Indigo default
+      let icon = "⭐";
 
-      let ringColor = "rgba(124, 58, 237, 0.65)";
-      let fillColor = "rgba(124, 58, 237, 0.12)";
-      if (z.id.includes("serve")) {
-        ringColor = "rgba(245, 158, 11, 0.75)";
-        fillColor = "rgba(245, 158, 11, 0.12)";
-      } else if (z.id.includes("bump") || z.id.includes("set")) {
-        ringColor = "rgba(56, 189, 248, 0.75)";
-        fillColor = "rgba(56, 189, 248, 0.12)";
-      }
-
-      ctx.strokeStyle = ringColor;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(z.x, z.y, z.radius + pulse, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.fillStyle = fillColor;
-      ctx.fill();
-      ctx.restore();
-
-      // 2. Central 2D Pixel Icon & Platform
-      ctx.save();
-      ctx.translate(z.x, z.y);
-
-      // Shadow
-      ctx.fillStyle = "rgba(15, 23, 42, 0.2)";
-      ctx.beginPath();
-      ctx.ellipse(0, 10, 12, 4, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Floor Marker Decal (Circular 2D Pixel Pad)
-      ctx.fillStyle = "#FFFFFF";
-      ctx.beginPath();
-      ctx.arc(0, 0, 12, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = ringColor;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Specific Cute 2D Pixel Icon
-      if (z.id === "zone_volleyball_bump") {
-        this.drawPixelVolleyballIcon(ctx, 0, -1);
-      } else if (z.id === "zone_volleyball_set") {
-        this.drawPixelSetIcon(ctx, 0, -1);
-      } else if (z.id === "zone_volleyball_serve_under") {
-        this.drawPixelTargetIcon(ctx, 0, 0);
-      } else if (z.id === "zone_volleyball_serve_over") {
-        this.drawPixelLightningIcon(ctx, 0, 0);
-      } else if (z.id === "zone_stretching" || z.id === "zone_squat") {
-        this.drawPixelStretchIcon(ctx, 0, -1);
-      } else if (z.id === "zone_warmup" || z.id === "zone_jumping") {
-        this.drawPixelFlameIcon(ctx, 0, -1);
+      if (z.id.includes("bump")) {
+        glowColor = "rgba(16, 185, 129, 0.55)";
+        icon = "🏐";
+      } else if (z.id.includes("set")) {
+        glowColor = "rgba(59, 130, 246, 0.55)";
+        icon = "🙌";
+      } else if (z.id.includes("serve")) {
+        glowColor = "rgba(245, 158, 11, 0.55)";
+        icon = "⚡";
+      } else if (z.id === "zone_stretching") {
+        glowColor = "rgba(168, 85, 247, 0.55)";
+        icon = "🧘";
+      } else if (z.id === "zone_warmup") {
+        glowColor = "rgba(239, 68, 68, 0.55)";
+        icon = "🔥";
+      } else if (z.id === "zone_coach") {
+        glowColor = "rgba(255, 255, 255, 0.6)";
+        icon = "🧢";
+      } else if (z.id === "zone_trophy") {
+        glowColor = "rgba(234, 179, 8, 0.6)";
+        icon = "🏆";
       } else if (z.id === "zone_health_station") {
-        this.drawPixelHealthIcon(ctx, 0, 0);
+        glowColor = "rgba(20, 184, 166, 0.6)";
+        icon = "🏥";
       }
 
-      // 3. Cute Floating Pill Label
-      this.drawPixelPillBadge(ctx, 0, 18, z.badge, "#1E293B", "#FFFFFF");
+      // Outer Pulse Ring
+      ctx.strokeStyle = glowColor;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(z.x, z.y, z.radius * 0.85 * pulse, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Station Mat Base
+      ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+      ctx.beginPath();
+      ctx.arc(z.x, z.y, 16, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Station Icon
+      ctx.font = "14px 'Segoe UI Emoji', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(icon, z.x, z.y);
+
+      // Station Name Pill
+      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      ctx.beginPath();
+      ctx.roundRect(z.x - 30, z.y + 16, 60, 14, 5);
+      ctx.fill();
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "bold 8px 'Prompt', sans-serif";
+      ctx.fillText(z.badge || z.name.split(" ")[0], z.x, z.y + 24);
 
       ctx.restore();
     });
-  }
 
-  // --- Cute 2D Pixel Art Icons ---
-  drawPixelHealthIcon(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    // Green Cross on White Base
-    ctx.fillStyle = "#10B981";
-    ctx.fillRect(-6, -2, 12, 4);
-    ctx.fillRect(-2, -6, 4, 12);
-    ctx.restore();
-  }
-  drawPixelVolleyballIcon(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    // White ball body
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(-6, -6, 12, 12);
-    // Yellow & Blue curvy stripes
-    ctx.fillStyle = "#38BDF8";
-    ctx.fillRect(-4, -4, 4, 4);
-    ctx.fillRect(1, 1, 4, 4);
-    ctx.fillStyle = "#FBBF24";
-    ctx.fillRect(1, -4, 4, 4);
-    ctx.fillRect(-4, 1, 4, 4);
-    // Outline
-    ctx.strokeStyle = "#0F172A";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(-6, -6, 12, 12);
-    ctx.restore();
-  }
-
-  drawPixelSetIcon(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    // Mini Volleyball above
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(-4, -8, 8, 8);
-    ctx.fillStyle = "#38BDF8";
-    ctx.fillRect(-2, -6, 4, 4);
-    ctx.strokeStyle = "#0F172A";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(-4, -8, 8, 8);
-    // Dual uplifted hands 🙌
-    ctx.fillStyle = "#FBD38D";
-    ctx.fillRect(-7, 2, 4, 5);
-    ctx.fillRect(3, 2, 4, 5);
-    ctx.fillStyle = "#0F172A";
-    ctx.fillRect(-7, 1, 3, 1);
-    ctx.fillRect(4, 1, 3, 1);
-    ctx.restore();
-  }
-
-  drawPixelTargetIcon(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    // Concentric Bullseye Rings 🎯
-    ctx.fillStyle = "#EF4444";
-    ctx.beginPath();
-    ctx.arc(0, 0, 8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#FFFFFF";
-    ctx.beginPath();
-    ctx.arc(0, 0, 5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#EF4444";
-    ctx.beginPath();
-    ctx.arc(0, 0, 2.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  drawPixelLightningIcon(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    // Golden Lightning Bolt ⚡
-    ctx.fillStyle = "#F59E0B";
-    ctx.beginPath();
-    ctx.moveTo(1, -8);
-    ctx.lineTo(-5, 0);
-    ctx.lineTo(0, 0);
-    ctx.lineTo(-2, 8);
-    ctx.lineTo(6, -1);
-    ctx.lineTo(1, -1);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = "#78350F";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  drawPixelStretchIcon(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    // Cute 2D Pixel Stretching Figure 🧘
-    ctx.fillStyle = "#10B981";
-    ctx.fillRect(-2, -7, 4, 4); // Head
-    ctx.fillStyle = "#059669";
-    ctx.fillRect(-3, -3, 6, 6); // Torso
-    ctx.fillStyle = "#34D399";
-    ctx.fillRect(-6, -1, 3, 2); // Left arm
-    ctx.fillRect(3, -1, 3, 2);  // Right arm
-    ctx.fillStyle = "#047857";
-    ctx.fillRect(-4, 3, 3, 3);  // Left folded leg
-    ctx.fillRect(1, 3, 3, 3);   // Right folded leg
-    ctx.restore();
-  }
-
-  drawPixelFlameIcon(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    // Cute Warm Flame 🔥
-    ctx.fillStyle = "#EF4444";
-    ctx.fillRect(-4, -6, 8, 10);
-    ctx.fillStyle = "#F97316";
-    ctx.fillRect(-3, -4, 6, 8);
-    ctx.fillStyle = "#FBBF24";
-    ctx.fillRect(-2, -1, 4, 5);
-    ctx.restore();
-  }
-
-  drawPixelStarIcon(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    // Cardio Star ⭐
-    ctx.fillStyle = "#F59E0B";
-    ctx.fillRect(-5, -5, 10, 10);
-    ctx.fillStyle = "#FBBF24";
-    ctx.fillRect(-4, -4, 8, 8);
-    ctx.fillStyle = "#FEF3C7";
-    ctx.fillRect(-1, -1, 2, 2);
-    ctx.restore();
-  }
-
-  drawPixelPillBadge(ctx, x, y, text, textColor, bgColor) {
-    ctx.save();
-    ctx.font = "8px 'Prompt', 'Nunito', sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    const textMetrics = ctx.measureText(text);
-    const badgeW = textMetrics.width + 10;
-    const badgeH = 13;
-
-    // Pill background
-    ctx.fillStyle = bgColor;
-    ctx.beginPath();
-    ctx.roundRect(x - badgeW / 2, y - badgeH / 2, badgeW, badgeH, 6);
-    ctx.fill();
-
-    // Border & subtle shadow
-    ctx.strokeStyle = "rgba(15, 23, 42, 0.15)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Text
-    ctx.fillStyle = textColor;
-    ctx.fillText(text, x, y + 0.5);
     ctx.restore();
   }
 }
