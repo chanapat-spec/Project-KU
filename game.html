@@ -175,11 +175,11 @@
         <button id="btn-sound" class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-full text-xs text-slate-700 shadow-xs transition-all" title="เปิด/ปิดเสียง">
           🔊
         </button>
-        <a href="index.html" class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-purple-100 hover:text-purple-600 border border-slate-200 text-slate-700 rounded-full text-xs shadow-xs transition-all" title="กลับหน้าแรก (Landing Page)">
-          🏠
+        <a href="index.html" class="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 rounded-full text-[11px] font-extrabold flex items-center gap-1 shadow-xs transition-all cursor-pointer" title="ออกจากเกมกลับหน้าแรก">
+          <span>🚪</span> ออกจากเกม
         </a>
-        <button id="btn-logout" class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-red-50 hover:text-red-500 border border-slate-200 text-slate-400 rounded-full text-xs shadow-xs transition-all" title="เปลี่ยนผู้เล่น">
-          🚪
+        <button id="btn-logout" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-full text-[11px] font-bold flex items-center gap-1 shadow-xs transition-all cursor-pointer" title="เปลี่ยนผู้เล่น / สลับชื่อ">
+          <span>🔄</span> สลับชื่อ
         </button>
       </div>
     </header>
@@ -240,15 +240,21 @@
       <div id="cam-border-indicator" class="cam-border border-4 border-yellow-400"></div>
 
       <!-- Top HUD -->
-      <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-20 pointer-events-none">
-        <div class="bg-white/90 px-4 py-2 rounded-2xl border border-emerald-300 shadow-md flex items-center space-x-2 backdrop-blur">
-          <span class="text-xs font-pixel text-emerald-600">REPS:</span>
-          <span id="cam-reps" class="font-pixel text-xl sm:text-2xl text-slate-900 font-bold">0 / 12</span>
+      <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-30 pointer-events-none gap-2">
+        <div class="bg-white/95 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl border border-emerald-300 shadow-md flex items-center space-x-2 backdrop-blur">
+          <span class="text-[10px] sm:text-xs font-pixel text-emerald-600">REPS:</span>
+          <span id="cam-reps" class="font-pixel text-lg sm:text-2xl text-slate-900 font-bold">0 / 12</span>
         </div>
 
-        <div class="bg-white/90 px-4 py-2 rounded-2xl border border-amber-300 shadow-md flex items-center space-x-2 backdrop-blur">
-          <span class="text-xs font-pixel text-amber-600">TIME:</span>
-          <span id="cam-timer" class="font-pixel text-xl sm:text-2xl text-amber-600 font-bold">50s</span>
+        <!-- Center Big Exit Button (Easy for kids to find) -->
+        <button id="btn-exit-cam" class="pointer-events-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-extrabold text-xs sm:text-sm rounded-full shadow-2xl border-2 border-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all">
+          <span class="text-base">🚪</span>
+          <span>ออกจากเกม</span>
+        </button>
+
+        <div class="bg-white/95 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl border border-amber-300 shadow-md flex items-center space-x-2 backdrop-blur">
+          <span class="text-[10px] sm:text-xs font-pixel text-amber-600">TIME:</span>
+          <span id="cam-timer" class="font-pixel text-lg sm:text-2xl text-amber-600 font-bold">50s</span>
         </div>
       </div>
 
@@ -278,8 +284,10 @@
         </div>
       </div>
 
-      <button id="btn-exit-cam" class="absolute bottom-4 right-4 z-30 px-3.5 py-1.5 bg-rose-600 text-white font-pixel text-[10px] rounded-full shadow hover:bg-rose-500">
-        ✕ ออก
+      <!-- Bottom-Right Big Secondary Exit Button -->
+      <button id="btn-exit-cam-bottom" class="pointer-events-auto absolute bottom-4 right-4 z-30 px-4 py-2 sm:py-2.5 bg-rose-600/90 hover:bg-rose-600 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-2xl border-2 border-rose-300 flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all">
+        <span class="text-base">🚪</span>
+        <span>ยกเลิก / ออก</span>
       </button>
     </div>
   </div>

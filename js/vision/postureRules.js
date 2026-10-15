@@ -50,6 +50,9 @@ export class PostureEvaluator {
     this.totalFrames = 0;
     this.correctFrames = 0;
     this.lastRepTime = 0; // Cooldown timer to prevent double counting
+    this.standingConfirmed = false; // Must confirm standing before squats/reps start
+    this.holdProgressMs = 0; // Accumulated hold duration for static stretching
+    this.lastFrameTime = Date.now();
   }
 
   reset() {
@@ -60,6 +63,9 @@ export class PostureEvaluator {
     this.totalFrames = 0;
     this.correctFrames = 0;
     this.lastRepTime = 0;
+    this.standingConfirmed = false;
+    this.holdProgressMs = 0;
+    this.lastFrameTime = Date.now();
   }
 
   getAccuracy() {
@@ -110,11 +116,90 @@ export class PostureEvaluator {
     let feedback = "";
     let repCounted = false;
 
+    const now = Date.now();
+    const timeDelta = Math.min(200, Math.max(16, now - (this.lastFrameTime || now)));
+    this.lastFrameTime = now;
+
+    // PREVENT SITTING CHEAT:
+    // If exercise requires full body or squats, user MUST be standing upright first!
+    const requiresStanding = this.config.requiresFullBody ||
+                             this.config.id === "volleyball_bump" ||
+                             this.config.id === "squat_warmup" ||
+                             this.config.rules?.repetition?.type === "knee_bend";
+
+    if (requiresStanding) {
+      if (avgKneeAngle >= 155) {
+        this.standingConfirmed = true;
+      }
+      if (!this.standingConfirmed) {
+        return {
+          isFormCorrect: false,
+          feedback: "⚠️ กรุณายืนขึ้นตรงก่อนเริ่มฝึก",
+          repCounted: false,
+          reps: this.reps,
+          accuracy: this.getAccuracy(),
+          angles: { elbow: avgElbowAngle, knee: avgKneeAngle }
+        };
+      }
+    }
+
+    // ==========================================
+    // 0. STATIC STRETCHING (ยืดเหยียดกล้ามเนื้อ 10 ท่า - ค้างท่า 2.5 วินาทีต่อนับ 1 ครั้ง)
+    // ==========================================
+    if (this.config.sport === "Stretching" || (this.config.id && this.config.id.startsWith("stretch_"))) {
+      let isHoldingProperly = true;
+      let postureTip = "ค้างท่าไว้...";
+
+      if (this.config.id === "stretch_triceps") {
+        const hasArmUp = (lElbow.y < lShoulder.y) || (rElbow.y < rShoulder.y);
+        if (!hasArmUp) {
+          isHoldingProperly = false;
+          postureTip = "ยกข้อศอกพับไปข้างหลัง!";
+        }
+      } else if (this.config.id === "stretch_shoulder_cross") {
+        const armCrossing = (lWrist.x > rShoulder.x && lWrist.x < lShoulder.x + 0.2) ||
+                            (rWrist.x < lShoulder.x && rWrist.x > rShoulder.x - 0.2);
+        if (!armCrossing && wristDist > shoulderWidth * 0.85) {
+          isHoldingProperly = false;
+          postureTip = "ดึงแขนพาดขวางหน้าอก!";
+        }
+      } else if (this.config.id === "stretch_side_bend") {
+        const armHigh = (lWrist.y < nose.y) || (rWrist.y < nose.y);
+        if (!armHigh) {
+          isHoldingProperly = false;
+          postureTip = "ชูแขนขึ้นแล้วเอียงลำตัว!";
+        }
+      }
+
+      if (isHoldingProperly) {
+        this.holdProgressMs += timeDelta;
+        const requiredHoldMs = 2500; // 2.5 seconds hold per rep
+        const progressSec = (this.holdProgressMs / 1000).toFixed(1);
+        const remainSec = Math.max(1, Math.ceil((requiredHoldMs - this.holdProgressMs) / 1000));
+
+        if (this.holdProgressMs >= requiredHoldMs) {
+          if (now - this.lastRepTime > 800) {
+            this.reps += 1;
+            repCounted = true;
+            this.lastRepTime = now;
+            this.holdProgressMs = 0;
+            feedback = `ยอดเยี่ยม! ครบ ${this.reps} ครั้ง 🧘`;
+          }
+        } else {
+          feedback = `ค้างท่าไว้... อีก ${remainSec} วินาที (${progressSec}s) ⏱️`;
+        }
+      } else {
+        this.holdProgressMs = Math.max(0, this.holdProgressMs - timeDelta * 1.5);
+        feedback = postureTip;
+        isFormCorrect = false;
+      }
+    }
+
     // ==========================================
     // 1. VOLLEYBALL BUMP (อันเดอร์บอล)
     // ==========================================
-    if (this.config.id === "volleyball_bump") {
-      const minArmAngle = this.config.rules?.armsStraight?.minAngle || 150;
+    else if (this.config.id === "volleyball_bump") {
+      const minArmAngle = this.config.rules?.armsStraight?.minAngle || 148;
       const armsStraight = leftElbowAngle >= minArmAngle && rightElbowAngle >= minArmAngle;
       const handsTogether = shoulderWidth > 0 ? (wristDist / shoulderWidth) <= 0.40 : false;
 
@@ -128,8 +213,8 @@ export class PostureEvaluator {
         feedback = "ฟอร์มดีมาก!";
       }
 
-      const downAngle = this.config.rules?.repetition?.downAngle || 125;
-      const upAngle = this.config.rules?.repetition?.upAngle || 155;
+      const downAngle = this.config.rules?.repetition?.downAngle || 120;
+      const upAngle = this.config.rules?.repetition?.upAngle || 158;
 
       if (this.state === "START" || this.state === "UP") {
         if (avgKneeAngle <= downAngle) {
@@ -138,12 +223,13 @@ export class PostureEvaluator {
         }
       } else if (this.state === "DOWN") {
         if (avgKneeAngle >= upAngle) {
-          if (armsStraight) {
+          if (armsStraight && (now - this.lastRepTime > 750)) {
             this.reps += 1;
             repCounted = true;
+            this.lastRepTime = now;
             this.state = "UP";
-            feedback = `ยอดเยี่ยม! ครั้งที่ ${this.reps}`;
-          } else {
+            feedback = `ยอดเยี่ยม! ครั้งที่ ${this.reps} 🏐`;
+          } else if (!armsStraight) {
             feedback = "แขนงอตอนส่งลูก! ลองใหม่";
             this.state = "UP";
           }
@@ -181,11 +267,12 @@ export class PostureEvaluator {
       // Push / Extension: Elbows extend (> 145°) and knees straighten (> 155°)
       else if (this.state === "DOWN") {
         if (avgElbowAngle >= 142 && avgKneeAngle >= 152) {
-          if (handsAboveShoulders) {
+          if (handsAboveShoulders && (now - this.lastRepTime > 750)) {
             this.reps += 1;
             repCounted = true;
+            this.lastRepTime = now;
             this.state = "UP";
-            feedback = `เซ็ตสวยงาม! ครั้งที่ ${this.reps}`;
+            feedback = `เซ็ตสวยงาม! ครั้งที่ ${this.reps} 🙌`;
           } else {
             feedback = "อย่าลดมือลงต่ำ!";
             this.state = "UP";
@@ -198,8 +285,8 @@ export class PostureEvaluator {
     // 3. SQUAT / KNEE BEND WARMUP (สควอท / ย่อเข่า)
     // ==========================================
     else if (this.config.id === "squat_warmup" || this.config.rules?.repetition?.type === "knee_bend") {
-      const downAngle = this.config.rules?.repetition?.downAngle || 120;
-      const upAngle = this.config.rules?.repetition?.upAngle || 155;
+      const downAngle = this.config.rules?.repetition?.downAngle || 118;
+      const upAngle = this.config.rules?.repetition?.upAngle || 158;
       const cueDown = this.config.rules?.repetition?.cueDown || "ย่อเข่าลง!";
       const cueUp = this.config.rules?.repetition?.cueUp || "ยืนขึ้นตรง!";
 
@@ -212,10 +299,13 @@ export class PostureEvaluator {
         }
       } else if (this.state === "DOWN") {
         if (avgKneeAngle >= upAngle) {
-          this.reps += 1;
-          repCounted = true;
-          this.state = "UP";
-          feedback = `ครบ 1 ครั้ง! (${this.reps}) 🦵`;
+          if (now - this.lastRepTime > 750) {
+            this.reps += 1;
+            repCounted = true;
+            this.lastRepTime = now;
+            this.state = "UP";
+            feedback = `ครบ 1 ครั้ง! (${this.reps}) 🦵`;
+          }
         }
       }
     }
@@ -237,9 +327,10 @@ export class PostureEvaluator {
           feedback = "กางแขนออก!";
         }
       } else if (this.state === "UP") {
-        if (avgArmSpread < 55) {
+        if (avgArmSpread < 55 && (now - this.lastRepTime > 550)) {
           this.reps += 1;
           repCounted = true;
+          this.lastRepTime = now;
           this.state = "DOWN";
           feedback = `เยี่ยม! (${this.reps}) ⭐`;
         }

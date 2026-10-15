@@ -274,10 +274,16 @@ class App {
       });
     }
 
-    // 6. Exit Camera Minigame
+    // 6. Exit Camera Minigame (Top & Bottom buttons for kids)
     const btnExitCam = document.getElementById("btn-exit-cam");
     if (btnExitCam) {
       btnExitCam.addEventListener("click", () => {
+        this.stopActionCamSession();
+      });
+    }
+    const btnExitCamBottom = document.getElementById("btn-exit-cam-bottom");
+    if (btnExitCamBottom) {
+      btnExitCamBottom.addEventListener("click", () => {
         this.stopActionCamSession();
       });
     }
@@ -709,8 +715,6 @@ class App {
         if (result.reps >= this.currentExercise.targetReps) {
           this.finishExerciseSession(true);
         }
-      } else if (!result.isFormCorrect && result.feedback) {
-        sound.speak(result.feedback);
       }
 
       return result;
@@ -720,7 +724,9 @@ class App {
   }
 
   startExerciseCountdown() {
-    sound.speak("พร้อมแล้ว เริ่มใน สาม สอง หนึ่ง", true);
+    // Spoken guidance ONLY before timer starts
+    const exerciseName = this.currentExercise?.name || "";
+    sound.speak(`พร้อมแล้ว เตรียมตัวฝึก ${exerciseName} เริ่มใน สาม สอง หนึ่ง`, true);
     let count = 3;
     this.camStatus.textContent = `เริ่มใน ${count}...`;
     sound.playBeep(false);
