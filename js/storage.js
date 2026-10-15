@@ -17,6 +17,8 @@ const STORAGE_KEYS = {
   DAILY_STREAK: "ku_volley_daily_streak"
 };
 
+export const DEFAULT_GOOGLE_SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbyqO3IcOOIdHraO0BRWRBmAAal9StUL8NvVrF3Wx0SBGz7FEmdKNXNOS7a5TAZ4Ug4N/exec";
+
 export const storage = {
   // Get current logged in student
   getStudent() {
@@ -257,7 +259,9 @@ export const storage = {
   // GOOGLE SHEETS CLOUD SYNC
   // ==========================================
   getCloudWebhook() {
-    return localStorage.getItem(STORAGE_KEYS.CLOUD_WEBHOOK) || "";
+    const saved = localStorage.getItem(STORAGE_KEYS.CLOUD_WEBHOOK);
+    if (saved === "OFFLINE") return "";
+    return saved || DEFAULT_GOOGLE_SHEETS_WEBHOOK;
   },
 
   saveCloudWebhook(url) {

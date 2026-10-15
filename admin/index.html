@@ -486,8 +486,7 @@
             supabase.fetchAllScores(filterRoom),
             supabase.fetchLeaderboard(filterRoom)
           ]);
-          if (cloudLB && cloudLB.length > 0) {
-            leaderboard = cloudLB;
+          if ((cloudScores && cloudScores.length > 0) || (cloudLB && cloudLB.length > 0)) {
             allRecords = (cloudScores || []).map(c => ({
               id: c.id,
               studentId: c.student_id,
@@ -504,6 +503,28 @@
               snapshotUrl: c.snapshot_url,
               timestamp: c.created_at
             }));
+
+            leaderboard = cloudLB ? [...cloudLB] : [];
+
+            // If a student submitted scores, ensure they are also included in the leaderboard list
+            const lbIds = new Set(leaderboard.map(s => s.id));
+            allRecords.forEach(r => {
+              if (r.studentId && !lbIds.has(r.studentId)) {
+                lbIds.add(r.studentId);
+                const studentRecords = allRecords.filter(x => x.studentId === r.studentId);
+                const totalXP = studentRecords.reduce((sum, x) => sum + (x.xpEarned || 0), 0);
+                leaderboard.push({
+                  id: r.studentId,
+                  name: r.studentName,
+                  studentNumber: r.studentNumber,
+                  room: r.room,
+                  totalXP: totalXP
+                });
+              }
+            });
+
+            // Sort leaderboard by totalXP descending
+            leaderboard.sort((a, b) => (b.totalXP || 0) - (a.totalXP || 0));
           }
         } catch (err) {
           console.warn("Supabase fetch failed, falling back to local storage:", err);
@@ -511,7 +532,7 @@
       }
 
       // LocalStorage Fallback if Supabase not used or empty
-      if (leaderboard.length === 0) {
+      if (leaderboard.length === 0 && allRecords.length === 0) {
         allRecords = storage.getAllScoreRecords();
         const localLB = storage.getLeaderboard();
         leaderboard = filterRoom === "ALL" 

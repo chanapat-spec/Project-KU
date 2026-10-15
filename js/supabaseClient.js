@@ -9,6 +9,11 @@ const STORAGE_KEYS = {
   SUPABASE_KEY: "ku_supabase_anon_key"
 };
 
+export const DEFAULT_SUPABASE_CONFIG = {
+  url: "https://qlcxxphorfkivfweaoyv.supabase.co",
+  key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsY3h4cGhvcmZraXZmd2Vhb3l2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NzU4MTAsImV4cCI6MjEwNzU1MTgxMH0.G42pQhN4tnv_HCelKBYePfnQQZjn4FyYM2GV6Ay8n_g"
+};
+
 class SupabaseManager {
   constructor() {
     this.client = null;
@@ -18,9 +23,14 @@ class SupabaseManager {
   }
 
   getCredentials() {
+    const savedUrl = localStorage.getItem(STORAGE_KEYS.SUPABASE_URL);
+    const savedKey = localStorage.getItem(STORAGE_KEYS.SUPABASE_KEY);
+    if (savedUrl === "OFFLINE") {
+      return { url: "", key: "" };
+    }
     return {
-      url: localStorage.getItem(STORAGE_KEYS.SUPABASE_URL) || "",
-      key: localStorage.getItem(STORAGE_KEYS.SUPABASE_KEY) || ""
+      url: savedUrl || DEFAULT_SUPABASE_CONFIG.url,
+      key: savedKey || DEFAULT_SUPABASE_CONFIG.key
     };
   }
 
@@ -289,7 +299,7 @@ class SupabaseManager {
     }
   }
 
-  // Realtime subscription for live leaderboard updates
+  // Realtime subscription for live leaderboard & score updates
   subscribeToLeaderboard(onUpdate) {
     if (!this.client) return;
 
@@ -298,12 +308,20 @@ class SupabaseManager {
     }
 
     this.realtimeChannel = this.client
-      .channel("public:students")
+      .channel("public-db-realtime")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "students" },
         (payload) => {
-          console.log("⚡ Realtime Leaderboard update received!", payload);
+          console.log("⚡ Realtime students update received!", payload);
+          if (onUpdate) onUpdate(payload);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "scores" },
+        (payload) => {
+          console.log("⚡ Realtime scores update received!", payload);
           if (onUpdate) onUpdate(payload);
         }
       )

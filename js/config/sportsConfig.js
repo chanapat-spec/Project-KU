@@ -849,8 +849,12 @@ export async function saveCustomExercises(customList) {
 
 export async function syncExercisesFromServer() {
   try {
-    const res = await fetch("/api/custom-exercises");
-    if (res.ok) {
+    let res = await fetch("/api/custom-exercises").catch(() => null);
+    if (!res || !res.ok) {
+      // Fallback for static hosting like GitHub Pages
+      res = await fetch("custom_exercises.json").catch(() => null);
+    }
+    if (res && res.ok) {
       const serverList = await res.json();
       if (Array.isArray(serverList) && serverList.length > 0) {
         localStorage.setItem("custom_sports_config", JSON.stringify(serverList));
