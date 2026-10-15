@@ -14,7 +14,8 @@ const STORAGE_KEYS = {
   LEADERBOARD: "ku_volley_leaderboard",
   CLOUD_WEBHOOK: "ku_google_sheets_webhook",
   WARDROBE: "ku_volley_wardrobe",
-  DAILY_STREAK: "ku_volley_daily_streak"
+  DAILY_STREAK: "ku_volley_daily_streak",
+  HEALTH_RECORDS: "ku_volley_health_records"
 };
 
 export const DEFAULT_GOOGLE_SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbyqO3IcOOIdHraO0BRWRBmAAal9StUL8NvVrF3Wx0SBGz7FEmdKNXNOS7a5TAZ4Ug4N/exec";
@@ -435,5 +436,210 @@ export const storage = {
     link.click();
     document.body.removeChild(link);
     return true;
+  },
+
+  // ==========================================
+  // STUDENT HEALTH & BMI ASSESSMENT (แผ่นงานที่ 2)
+  // ==========================================
+  calculateBMI(weightKg, heightCm) {
+    if (!weightKg || !heightCm || heightCm <= 0) return 0;
+    const heightM = heightCm / 100;
+    return parseFloat((weightKg / (heightM * heightM)).toFixed(1));
+  },
+
+  getBMICategory(bmi) {
+    if (!bmi || bmi <= 0) return { category: "ไม่ระบุ", color: "text-slate-400", badge: "bg-slate-700 text-slate-300", advice: "-" };
+    if (bmi < 18.5) {
+      return {
+        category: "ผอม (น้ำหนักน้อยกว่าเกณฑ์)",
+        color: "text-sky-400",
+        badge: "bg-sky-500/20 text-sky-400 border border-sky-500/40",
+        advice: "ควรรับประทานอาหารให้ครบ 5 หมู่ และเพิ่มพลังงานให้เพียงพอต่อการเจริญเติบโต",
+        zone: "blue"
+      };
+    } else if (bmi <= 22.9) {
+      return {
+        category: "สมส่วน (น้ำหนักตามเกณฑ์มาตรฐาน)",
+        color: "text-emerald-400",
+        badge: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40",
+        advice: "สุขภาพดีมาก! ควรรักษาระดับกิจกรรมทางกายและการรับประทานอาหารที่ดีนี้ไว้ต่อเนื่อง",
+        zone: "green"
+      };
+    } else if (bmi <= 24.9) {
+      return {
+        category: "ท้วม (น้ำหนักเกินเกณฑ์เล็กน้อย)",
+        color: "text-amber-400",
+        badge: "bg-amber-500/20 text-amber-400 border border-amber-500/40",
+        advice: "ควรเพิ่มกิจกรรมเคลื่อนไหวร่างกาย เล่นกีฬาอย่างน้อย 45-60 นาทีต่อวัน และลดของทอดของหวาน",
+        zone: "yellow"
+      };
+    } else if (bmi <= 29.9) {
+      return {
+        category: "เริ่มอ้วน (ภาวะอ้วนระดับ 1)",
+        color: "text-orange-400",
+        badge: "bg-orange-500/20 text-orange-400 border border-orange-500/40",
+        advice: "ควรควบคุมปริมาณน้ำตาล ขนมกรุบกรอบ และร่วมกิจกรรมกีฬาหรือแอโรบิกเป็นประจำ",
+        zone: "orange"
+      };
+    } else {
+      return {
+        category: "อ้วนมาก (ภาวะอ้วนระดับ 2)",
+        color: "text-rose-400",
+        badge: "bg-rose-500/20 text-rose-400 border border-rose-500/40",
+        advice: "ควรปรึกษาครูพละและผู้ปกครองเพื่อวางแผนโภชนาการ และออกกำลังกายแบบไม่กระแทกข้อต่อ เช่น ว่ายน้ำหรือเดินเร็ว",
+        zone: "red"
+      };
+    }
+  },
+
+  getAllHealthRecords() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.HEALTH_RECORDS);
+      if (data) {
+        const records = JSON.parse(data);
+        if (records.length > 0) return records;
+      }
+      return this.getSeededHealthRecords();
+    } catch (e) {
+      return this.getSeededHealthRecords();
+    }
+  },
+
+  getSeededHealthRecords() {
+    const seeded = [
+      {
+        id: "ห้อง 1_12_ด.ญ. พลอย ยอดตบ",
+        studentId: "ห้อง 1_12_ด.ญ. พลอย ยอดตบ",
+        room: "ห้อง 1",
+        studentNumber: "12",
+        name: "ด.ญ. พลอย ยอดตบ",
+        gender: "female",
+        age: 10,
+        weight: 32.5,
+        height: 138,
+        bmi: 17.1,
+        classification: "ผอม (น้ำหนักน้อยกว่าเกณฑ์)",
+        timestamp: new Date(Date.now() - 3600000 * 2).toLocaleString("th-TH")
+      },
+      {
+        id: "ห้อง 1_5_ด.ช. วิน เซ็ตบอลไว",
+        studentId: "ห้อง 1_5_ด.ช. วิน เซ็ตบอลไว",
+        room: "ห้อง 1",
+        studentNumber: "5",
+        name: "ด.ช. วิน เซ็ตบอลไว",
+        gender: "male",
+        age: 11,
+        weight: 38.0,
+        height: 142,
+        bmi: 18.8,
+        classification: "สมส่วน (น้ำหนักตามเกณฑ์มาตรฐาน)",
+        timestamp: new Date(Date.now() - 3600000 * 5).toLocaleString("th-TH")
+      },
+      {
+        id: "ห้อง 2_8_ด.ช. เบส ขุดบอลเก่ง",
+        studentId: "ห้อง 2_8_ด.ช. เบส ขุดบอลเก่ง",
+        room: "ห้อง 2",
+        studentNumber: "8",
+        name: "ด.ช. เบส ขุดบอลเก่ง",
+        gender: "male",
+        age: 10,
+        weight: 45.0,
+        height: 139,
+        bmi: 23.3,
+        classification: "ท้วม (น้ำหนักเกินเกณฑ์เล็กน้อย)",
+        timestamp: new Date(Date.now() - 3600000 * 24).toLocaleString("th-TH")
+      },
+      {
+        id: "ห้อง 2_19_ด.ญ. มายด์ เสิร์ฟแม่น",
+        studentId: "ห้อง 2_19_ด.ญ. มายด์ เสิร์ฟแม่น",
+        room: "ห้อง 2",
+        studentNumber: "19",
+        name: "ด.ญ. มายด์ เสิร์ฟแม่น",
+        gender: "female",
+        age: 11,
+        weight: 39.5,
+        height: 144,
+        bmi: 19.0,
+        classification: "สมส่วน (น้ำหนักตามเกณฑ์มาตรฐาน)",
+        timestamp: new Date(Date.now() - 3600000 * 48).toLocaleString("th-TH")
+      }
+    ];
+    localStorage.setItem(STORAGE_KEYS.HEALTH_RECORDS, JSON.stringify(seeded));
+    return seeded;
+  },
+
+  getHealthRecordByStudent(studentId) {
+    const all = this.getAllHealthRecords();
+    return all.find(r => r.studentId === studentId || r.id === studentId);
+  },
+
+  saveHealthRecord(data) {
+    const studentId = `${data.room || 'ห้อง 1'}_${data.studentNumber || '1'}_${data.name.trim()}`;
+    const weight = parseFloat(data.weight);
+    const height = parseFloat(data.height);
+    const bmi = this.calculateBMI(weight, height);
+    const info = this.getBMICategory(bmi);
+
+    const record = {
+      id: studentId,
+      studentId: studentId,
+      name: data.name.trim(),
+      studentNumber: String(data.studentNumber || '').trim(),
+      room: (data.room || 'ห้อง 1').trim(),
+      gender: data.gender || 'male',
+      age: parseInt(data.age, 10) || 10,
+      weight: weight,
+      height: height,
+      bmi: bmi,
+      classification: info.category,
+      timestamp: new Date().toLocaleString("th-TH")
+    };
+
+    const all = this.getAllHealthRecords();
+    const idx = all.findIndex(r => r.studentId === studentId);
+    if (idx >= 0) {
+      all[idx] = { ...all[idx], ...record };
+    } else {
+      all.unshift(record);
+    }
+    localStorage.setItem(STORAGE_KEYS.HEALTH_RECORDS, JSON.stringify(all));
+
+    // Submit to Google Sheets Cloud (Sheet 2)
+    this.submitHealthRecordToCloud(record);
+
+    return record;
+  },
+
+  async submitHealthRecordToCloud(record) {
+    const webhookUrl = this.getCloudWebhook();
+    if (!webhookUrl) return false;
+
+    try {
+      const payload = {
+        type: "health_bmi", // Indicator for Google Apps Script to write into Sheet 2
+        timestamp: record.timestamp,
+        room: record.room,
+        studentNumber: record.studentNumber,
+        studentName: record.name,
+        gender: record.gender === "female" ? "หญิง" : "ชาย",
+        age: record.age,
+        weight: record.weight,
+        height: record.height,
+        bmi: record.bmi,
+        classification: record.classification
+      };
+
+      await fetch(webhookUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+      console.log("🏥 Successfully sent Health & BMI record to Google Sheets (Tab 2)!");
+      return true;
+    } catch (err) {
+      console.warn("Health cloud sync failed:", err);
+      return false;
+    }
   }
 };

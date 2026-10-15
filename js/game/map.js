@@ -110,6 +110,16 @@ export class GymMap {
         radius: 35,
         prompt: "[A] ดูอันดับคะแนน 🏆",
         badge: "🏆 อันดับ"
+      },
+      {
+        id: "zone_health_station",
+        type: "health",
+        name: "ห้องตรวจสุขภาพ & วัด BMI (Health Room)",
+        x: 300,
+        y: 280,
+        radius: 35,
+        prompt: "[A] ตรวจสุขภาพ & วัดค่า BMI 🏥",
+        badge: "🏥 วัด BMI"
       }
     ];
 
@@ -619,6 +629,8 @@ export class GymMap {
         this.drawPixelStretchIcon(ctx, 0, -1);
       } else if (z.id === "zone_warmup" || z.id === "zone_jumping") {
         this.drawPixelFlameIcon(ctx, 0, -1);
+      } else if (z.id === "zone_health_station") {
+        this.drawPixelHealthIcon(ctx, 0, 0);
       }
 
       // 3. Cute Floating Pill Label
@@ -629,6 +641,15 @@ export class GymMap {
   }
 
   // --- Cute 2D Pixel Art Icons ---
+  drawPixelHealthIcon(ctx, x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+    // Green Cross on White Base
+    ctx.fillStyle = "#10B981";
+    ctx.fillRect(-6, -2, 12, 4);
+    ctx.fillRect(-2, -6, 4, 12);
+    ctx.restore();
+  }
   drawPixelVolleyballIcon(ctx, x, y) {
     ctx.save();
     ctx.translate(x, y);

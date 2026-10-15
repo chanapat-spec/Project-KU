@@ -314,6 +314,71 @@ class App {
       });
     }
 
+    // 9.1 Open Health & BMI Modal
+    const btnOpenHealthBMI = document.getElementById("btn-open-health-bmi");
+    if (btnOpenHealthBMI) {
+      btnOpenHealthBMI.addEventListener("click", () => {
+        this.showHealthBMIModal();
+      });
+    }
+
+    // Live BMI calculation listeners
+    const inputHWeight = document.getElementById("input-health-weight");
+    const inputHHeight = document.getElementById("input-health-height");
+    if (inputHWeight) inputHWeight.addEventListener("input", () => this.updateLiveBMICalculation());
+    if (inputHHeight) inputHHeight.addEventListener("input", () => this.updateLiveBMICalculation());
+
+    // Submit Health Form
+    const formHealthBMI = document.getElementById("form-health-bmi");
+    if (formHealthBMI) {
+      formHealthBMI.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const student = this.currentStudent || storage.getStudent();
+        if (!student) {
+          alert("ไม่พบข้อมูลนักเรียน กรุณาล็อกอินใหม่");
+          return;
+        }
+
+        const genderRadio = document.querySelector('input[name="health-gender"]:checked');
+        const gender = genderRadio ? genderRadio.value : "male";
+        const age = parseInt(document.getElementById("input-health-age").value, 10) || 10;
+        const weight = parseFloat(document.getElementById("input-health-weight").value);
+        const height = parseFloat(document.getElementById("input-health-height").value);
+
+        if (!weight || !height) {
+          alert("กรุณากรอกน้ำหนักและส่วนสูงให้ถูกต้อง");
+          return;
+        }
+
+        const record = storage.saveHealthRecord({
+          name: student.name,
+          studentNumber: student.studentNumber,
+          room: student.room,
+          gender,
+          age,
+          weight,
+          height
+        });
+
+        // Award +10 XP Bonus
+        student.totalXP = (student.totalXP || 0) + 10;
+        storage.saveStudent(student);
+        this.currentStudent = student;
+        if (this.playerXP) this.playerXP.textContent = `${student.totalXP} XP`;
+        sound.playCoin();
+        sound.speak(`บันทึกข้อมูลสุขภาพเรียบร้อย คุณมีค่า บีเอ็มไอ ${record.bmi} ${record.classification}`);
+
+        this.showNotificationToast(
+          "🏥 บันทึกข้อมูลสุขภาพ & BMI สำเร็จ!",
+          `ค่า BMI: ${record.bmi} (${record.classification}) รับโบนัสรักสุขภาพ +10 XP! ⭐`,
+          "❤️"
+        );
+
+        document.getElementById("modal-health-bmi").classList.add("hidden");
+        if (this.gameEngine) this.gameEngine.resume();
+      });
+    }
+
     // 10. Wardrobe Item Buttons
     document.querySelectorAll(".btn-skin-jersey").forEach(btn => {
       btn.addEventListener("click", (e) => {
@@ -456,6 +521,8 @@ class App {
       }
 
       this.openExerciseBriefing(zone.exerciseId);
+    } else if (zone.type === "health" || zone.id === "zone_health_station") {
+      this.showHealthBMIModal();
     } else if (zone.type === "npc") {
       this.showCoachDialog(zone.dialog);
     } else if (zone.type === "leaderboard") {
@@ -594,6 +661,57 @@ class App {
         <td class="p-2 text-right text-emerald-400 font-bold font-mono">${item.totalXP || 0}</td>
       </tr>
     `).join("");
+  }
+
+  // --- HEALTH & BMI ASSESSMENT MODAL ---
+  showHealthBMIModal() {
+    if (this.gameEngine) this.gameEngine.pause();
+    const modal = document.getElementById("modal-health-bmi");
+    if (!modal) return;
+
+    const student = this.currentStudent || storage.getStudent();
+    if (student) {
+      document.getElementById("health-student-name").textContent = student.name;
+      document.getElementById("health-student-room").textContent = student.room || "ห้อง 1";
+      document.getElementById("health-student-number").textContent = `เลขที่ ${student.studentNumber || '1'}`;
+
+      // Pre-fill existing record if available
+      const existing = storage.getHealthRecordByStudent(student.id);
+      if (existing) {
+        if (existing.age) document.getElementById("input-health-age").value = existing.age;
+        if (existing.weight) document.getElementById("input-health-weight").value = existing.weight;
+        if (existing.height) document.getElementById("input-health-height").value = existing.height;
+        if (existing.gender) {
+          const radio = document.querySelector(`input[name="health-gender"][value="${existing.gender}"]`);
+          if (radio) radio.checked = true;
+        }
+      }
+      this.updateLiveBMICalculation();
+    }
+
+    modal.classList.remove("hidden");
+  }
+
+  updateLiveBMICalculation() {
+    const weightEl = document.getElementById("input-health-weight");
+    const heightEl = document.getElementById("input-health-height");
+    const previewBmi = document.getElementById("health-preview-bmi");
+    const previewBadge = document.getElementById("health-preview-badge");
+    if (!weightEl || !heightEl || !previewBmi || !previewBadge) return;
+
+    const w = parseFloat(weightEl.value);
+    const h = parseFloat(heightEl.value);
+    if (w > 0 && h > 0) {
+      const bmi = storage.calculateBMI(w, h);
+      const cat = storage.getBMICategory(bmi);
+      previewBmi.textContent = bmi;
+      previewBadge.textContent = cat.category;
+      previewBadge.className = `px-2.5 py-0.5 rounded-full text-[10px] font-bold ${cat.badge}`;
+    } else {
+      previewBmi.textContent = "--";
+      previewBadge.textContent = "กรอกข้อมูลเพื่อคำนวณ";
+      previewBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700";
+    }
   }
 
   // --- EXERCISE BRIEFING MODAL WITH 8-BIT ANIMATED TUTORIAL ---

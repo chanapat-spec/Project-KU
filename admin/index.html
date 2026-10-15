@@ -103,102 +103,392 @@
       </div>
     </div>
 
-    <!-- Supabase Realtime Cloud Database & Storage Section -->
-    <div class="bg-slate-800 rounded-xl border border-emerald-400/50 shadow-xl p-5 relative overflow-hidden">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
-        <div>
-          <div class="flex items-center gap-2">
-            <h2 class="font-bold text-sm text-emerald-400 flex items-center gap-2">
-              <span>⚡</span> Supabase Realtime Database & Storage (คลาวด์เก็บคะแนน + รูปภาพ)
-            </h2>
-            <span id="supabase-status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-700 text-gray-300">⚪ กำลังตรวจสอบสถานะ...</span>
+    <!-- ========================================== -->
+    <!-- COLLAPSIBLE CLOUD & WEBHOOK SETTINGS       -->
+    <!-- (ซ่อนแผงตั้งค่าเทคนิคเพื่อความสบายตาของคุณครู)    -->
+    <!-- ========================================== -->
+    <div class="bg-slate-800/90 rounded-2xl border border-slate-700/80 shadow-md overflow-hidden transition-all">
+      <button type="button" id="btn-toggle-cloud-settings" class="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-slate-750 transition-colors cursor-pointer bg-slate-800/50">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-slate-700 flex items-center justify-center text-sm shadow-inner">
+            ⚙️
           </div>
-          <p class="text-xs text-gray-400 mt-1">
-            ซิงค์คะแนนนักเรียนแบบเรียลไทม์ และเก็บรูปถ่ายหลักฐานการทำท่าทางลง Cloud Storage อัตโนมัติ
-          </p>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-xs sm:text-sm text-slate-200">ตั้งค่าการเชื่อมต่อคลาวด์ & ระบบจัดเก็บข้อมูล</span>
+              <span id="cloud-status-pill" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-700 text-gray-300">⚪ กำลังตรวจสอบ</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-0.5">ซิงค์คะแนนอัตโนมัติ (Supabase Realtime) & สำรองข้อมูล 2 แผ่นงาน (Google Sheets Webhook)</p>
+          </div>
         </div>
-        <button id="btn-toggle-supabase-guide" class="text-xs text-yellow-400 underline hover:text-yellow-300">
-          📋 ดูวิธีตั้งค่า & รัน SQL สคริปต์
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-        <div>
-          <label class="block text-[11px] text-gray-300 mb-1 font-semibold">Project URL:</label>
-          <input type="url" id="input-supabase-url" placeholder="https://xxxxxxxx.supabase.co"
-            class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-400 font-mono">
+        <div class="flex items-center gap-2 text-xs text-yellow-400 font-bold bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-700">
+          <span id="cloud-toggle-text">⚙️ คลิกเพื่อตั้งค่า</span>
+          <span id="cloud-toggle-arrow">▼</span>
         </div>
-        <div>
-          <label class="block text-[11px] text-gray-300 mb-1 font-semibold">Anon Public Key:</label>
-          <input type="password" id="input-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..."
-            class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-400 font-mono">
+      </button>
+
+      <!-- Collapsible Container (Hidden by default) -->
+      <div id="cloud-settings-content" class="hidden p-5 border-t border-slate-700/80 bg-slate-900/60 space-y-6">
+        <!-- Supabase Settings -->
+        <div class="bg-slate-800/80 rounded-xl border border-emerald-400/30 p-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-bold text-xs text-emerald-400 flex items-center gap-1.5">
+                  <span>⚡</span> Supabase Realtime Database & Storage
+                </h3>
+                <span id="supabase-status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-700 text-gray-300">⚪ กำลังตรวจสอบสถานะ...</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-0.5">ซิงค์ตารางคะแนนสดและเก็บรูปภาพหลักฐานการทำท่าทาง</p>
+            </div>
+            <button type="button" id="btn-toggle-supabase-guide" class="text-xs text-yellow-400 underline hover:text-yellow-300">
+              📋 ดูวิธีรัน SQL สคริปต์
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div>
+              <label class="block text-[11px] text-gray-300 mb-1 font-semibold">Project URL:</label>
+              <input type="url" id="input-supabase-url" placeholder="https://xxxxxxxx.supabase.co"
+                class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-400 font-mono">
+            </div>
+            <div>
+              <label class="block text-[11px] text-gray-300 mb-1 font-semibold">Anon Public Key:</label>
+              <input type="password" id="input-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+                class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-400 font-mono">
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="btn-save-supabase" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded shadow flex items-center gap-1.5">
+              <span>💾</span> บันทึก Supabase
+            </button>
+            <button type="button" id="btn-test-supabase" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded shadow flex items-center gap-1.5">
+              <span>🔌</span> ทดสอบการเชื่อมต่อ
+            </button>
+            <button type="button" id="btn-clear-supabase" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-gray-300 text-xs rounded">
+              ล้างค่า
+            </button>
+            <span id="supabase-test-result" class="text-xs font-semibold"></span>
+          </div>
+
+          <!-- Supabase Guide Box -->
+          <div id="supabase-guide-box" class="hidden mt-3 p-3 bg-slate-950 rounded border border-slate-700 text-xs text-gray-300 space-y-1.5">
+            <p class="font-bold text-yellow-300">🛠️ ขั้นตอนเชื่อมต่อ Supabase:</p>
+            <ol class="list-decimal list-inside space-y-1 text-gray-300 text-[11px]">
+              <li>เข้าเว็บ <a href="https://supabase.com" target="_blank" class="text-emerald-400 underline font-semibold">supabase.com</a> ล็อกอินและเปิดโปรเจกต์ของคุณ</li>
+              <li>ไปที่เมนู <strong>Project Settings ➔ API</strong> นำ <strong>Project URL</strong> และ <strong>anon key</strong> มาวาง</li>
+              <li>เปิดไฟล์ <code class="bg-slate-800 text-yellow-300 px-1 py-0.5 rounded font-mono">supabase_schema.sql</code> คัดลอกโค้ดไปวางใน <strong>SQL Editor</strong> แล้วกด <strong>Run</strong></li>
+            </ol>
+          </div>
         </div>
-      </div>
 
-      <div class="flex flex-wrap items-center gap-2">
-        <button id="btn-save-supabase" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded shadow flex items-center gap-1.5">
-          <span>💾</span> บันทึกการเชื่อมต่อ
-        </button>
-        <button id="btn-test-supabase" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded shadow flex items-center gap-1.5">
-          <span>🔌</span> ทดสอบการเชื่อมต่อ
-        </button>
-        <button id="btn-clear-supabase" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-gray-300 text-xs rounded">
-          ล้างค่า
-        </button>
-        <span id="supabase-test-result" class="text-xs font-semibold"></span>
-      </div>
+        <!-- Google Sheets Webhook Settings -->
+        <div class="bg-slate-800/80 rounded-xl border border-slate-700 p-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+            <div>
+              <h3 class="font-bold text-xs text-gray-300 flex items-center gap-2">
+                <span>☁️</span> Google Sheets Webhook (ระบบบันทึกคะแนน & ข้อมูลสุขภาพ 2 แผ่นงาน)
+              </h3>
+              <p class="text-[11px] text-gray-400 mt-0.5">ส่งทั้งคะแนนการฝึก (แผ่นงาน 1) และข้อมูล BMI (แผ่นงาน 2) เข้า Google Sheets แผ่นเดิมอัตโนมัติ</p>
+            </div>
+            <button type="button" id="btn-toggle-instructions" class="text-xs text-yellow-400 underline hover:text-yellow-300">
+              📖 ดูวิธีติดตั้ง Apps Script (2 แผ่นงาน)
+            </button>
+          </div>
 
-      <!-- Supabase Setup Guide Collapsible -->
-      <div id="supabase-guide-box" class="hidden mt-4 p-3 bg-slate-950 rounded border border-slate-700 text-xs text-gray-300 space-y-2">
-        <p class="font-bold text-yellow-300">🛠️ ขั้นตอนการเชื่อมต่อ Supabase:</p>
-        <ol class="list-decimal list-inside space-y-1.5 text-gray-300 text-[11px]">
-          <li>เข้าเว็บ <a href="https://supabase.com" target="_blank" class="text-emerald-400 underline font-semibold">supabase.com</a> ล็อกอินเข้าบัญชี และเปิดโปรเจกต์ของคุณ</li>
-          <li>ไปที่เมนู <strong>Project Settings (รูปฟันเฟือง) ➔ API</strong></li>
-          <li>คัดลอก <strong>Project URL</strong> และ <strong>anon / public API key</strong> มาวางในช่องด้านบนนี้แล้วกด "บันทึกการเชื่อมต่อ"</li>
-          <li>ไปที่เมนู <strong>SQL Editor</strong> ในแดชบอร์ด Supabase</li>
-          <li>เปิดไฟล์ <code class="bg-slate-800 text-yellow-300 px-1 py-0.5 rounded font-mono">supabase_schema.sql</code> (ในโฟลเดอร์โปรเจกต์นี้) คัดลอกโค้ดทั้งหมดไปวางแล้วกด <strong>Run</strong></li>
-          <li>สคริปต์จะสร้างตาราง <strong>students</strong>, <strong>scores</strong>, เปิด Realtime และสร้าง Storage Bucket <strong>homework-snapshots</strong> ให้ทันที!</li>
-        </ol>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input type="url" id="input-webhook-url" placeholder="วาง Google Apps Script Web App URL ที่นี่ (https://script.google.com/macros/s/.../exec)"
+              class="flex-1 bg-slate-900 border border-slate-600 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-400 font-mono">
+            <button type="button" id="btn-save-webhook" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs rounded">
+              บันทึก Webhook
+            </button>
+          </div>
+
+          <!-- Instructions Collapsible -->
+          <div id="instructions-box" class="hidden mt-3 p-3 bg-slate-950 rounded border border-slate-700 text-xs text-gray-300 space-y-2">
+            <p class="font-bold text-yellow-300">📝 โค้ด Google Apps Script รองรับ 2 แผ่นงานในชีตเดิม:</p>
+            <p class="text-[11px] text-slate-400">ก๊อปปี้โค้ดด้านล่างนี้ไปวางใน <strong>ส่วนขยาย ➔ Apps Script</strong> ใน Google Sheets ของคุณ:</p>
+            <pre class="bg-slate-900 p-3 rounded text-emerald-300 font-mono text-[10px] my-1 overflow-x-auto border border-slate-700 leading-relaxed">function doPost(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var d = JSON.parse(e.postData.contents);
+
+  // 1. ตรวจสอบถ้าเป็นข้อมูลสุขภาพ & BMI ให้ลงแผ่นงานที่ 2
+  if (d.type === "health_bmi") {
+    var healthSheet = ss.getSheetByName("ข้อมูลสุขภาพ_BMI");
+    if (!healthSheet) {
+      healthSheet = ss.insertSheet("ข้อมูลสุขภาพ_BMI");
+      healthSheet.appendRow(["วัน-เวลา", "ห้อง", "เลขที่", "ชื่อ-นามสกุล", "เพศ", "อายุ (ปี)", "น้ำหนัก (กก.)", "ส่วนสูง (ซม.)", "ค่า BMI", "เกณฑ์การเจริญเติบโต"]);
+      healthSheet.getRange("A1:J1").setBackground("#10b981").setFontColor("#ffffff").setFontWeight("bold");
+    }
+    healthSheet.appendRow([d.timestamp, d.room, d.studentNumber, d.studentName, d.gender, d.age, d.weight, d.height, d.bmi, d.classification]);
+    return ContentService.createTextOutput("OK_HEALTH");
+  }
+
+  // 2. ถ้าเป็นคะแนนการฝึกซ้อม ให้ลงแผ่นงานแรกตามปกติ
+  var scoreSheet = ss.getSheetByName("คะแนนการฝึกซ้อม") || ss.getActiveSheet();
+  if (scoreSheet.getLastRow() === 0) {
+    scoreSheet.appendRow(["วัน-เวลา", "ห้อง", "เลขที่", "ชื่อ-นามสกุล", "รหัสท่า", "จำนวนครั้ง", "เป้าหมาย", "ความเป๊ะ (%)", "เกรด", "XP ที่ได้"]);
+    scoreSheet.getRange("A1:J1").setBackground("#6366f1").setFontColor("#ffffff").setFontWeight("bold");
+  }
+  scoreSheet.appendRow([d.timestamp, d.room, d.studentNumber, d.studentName, d.exerciseId, d.reps, d.targetReps, d.accuracy, d.grade, d.xpEarned]);
+  return ContentService.createTextOutput("OK_SCORE");
+}</pre>
+            <p class="text-[11px] text-yellow-300">💡 วางโค้ดเสร็จแล้วกด Deploy ➔ Manage deployments ➔ Edit (หรือ New deployment) ➔ Version New ➔ Deploy เพื่อเปิดใช้งาน</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Google Sheets Cloud Sync Section (Optional Legacy Fallback) -->
-    <div class="bg-slate-800 rounded-xl border border-slate-700 shadow-lg p-4">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-2">
+
+    <!-- ========================================== -->
+    <!-- 🏥 NEW: STUDENT HEALTH & BMI ANALYTICS     -->
+    <!-- (แผนภูมิข้อมูลสุขภาพเด็ก BMI รายบุคคลและห้อง)  -->
+    <!-- ========================================== -->
+    <div class="bg-slate-800 rounded-2xl border-2 border-emerald-500/40 shadow-xl overflow-hidden">
+      <!-- Section Header with Filters -->
+      <div class="p-4 sm:p-5 border-b border-slate-700 bg-gradient-to-r from-slate-800 to-slate-800/80 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 class="font-bold text-xs text-gray-300 flex items-center gap-2">
-            <span>☁️</span> ตัวเลือกเสริม: Google Sheets Webhook (ส่งคะแนนสำรองเข้าชีต)
-          </h2>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🏥</span>
+            <h2 class="font-bold text-base sm:text-lg text-emerald-400">
+              แผนภูมิข้อมูลสุขภาพ & ค่า BMI นักเรียน
+            </h2>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-700">Health & Growth</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">
+            เกณฑ์มาตรฐานการเจริญเติบโตของเด็กวัยเรียน (กรมอนามัย กระทรวงสาธารณสุข)
+          </p>
         </div>
-        <button id="btn-toggle-instructions" class="text-xs text-yellow-400 underline hover:text-yellow-300">
-          📖 ดูวิธีติดตั้ง Google Apps Script
-        </button>
+
+        <!-- Dropdowns: Room & Student Selectors -->
+        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+          <!-- Room Dropdown -->
+          <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5">
+            <span class="text-xs text-slate-400 font-semibold">ห้อง:</span>
+            <select id="bmi-filter-room" class="bg-transparent text-xs text-white font-bold focus:outline-none cursor-pointer">
+              <option value="ALL">ทุกห้องเรียน (All)</option>
+            </select>
+          </div>
+
+          <!-- Student Dropdown -->
+          <div class="flex items-center gap-1.5 bg-slate-900 border-2 border-emerald-500/80 rounded-xl px-2.5 py-1.5 flex-1 md:flex-none">
+            <span class="text-xs text-emerald-400 font-semibold">นักเรียน:</span>
+            <select id="bmi-select-student" class="bg-transparent text-xs text-emerald-300 font-bold focus:outline-none cursor-pointer max-w-[200px] truncate">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+
+          <!-- Export Health Data Button -->
+          <button type="button" id="btn-export-health-csv" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1 cursor-pointer" title="ส่งออก CSV ข้อมูลสุขภาพ">
+            <span>📥</span>
+            <span class="hidden sm:inline">Export CSV</span>
+          </button>
+        </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row gap-2">
-        <input type="url" id="input-webhook-url" placeholder="วาง Google Apps Script Web App URL ที่นี่ (https://script.google.com/macros/s/.../exec)"
-          class="flex-1 bg-slate-900 border border-slate-600 rounded px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400 font-mono">
-        <button id="btn-save-webhook" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs rounded">
-          บันทึก Webhook
-        </button>
+      <!-- Main Health Card Display (2 Columns) -->
+      <div class="p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Column 1: Individual Student Health & BMI Gauge (7 Cols) -->
+        <div class="lg:col-span-7 bg-slate-900/80 rounded-2xl border border-slate-700 p-5 flex flex-col justify-between">
+          <div>
+            <!-- Student Header Profile -->
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+              <div class="flex items-center gap-3">
+                <div id="bmi-avatar-icon" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-2xl shadow-md text-white">
+                  👦
+                </div>
+                <div>
+                  <h3 id="bmi-student-name" class="font-bold text-base text-white">กรุณาเลือกนักเรียน</h3>
+                  <div class="flex items-center gap-2 mt-0.5 text-xs text-slate-400">
+                    <span id="bmi-student-room" class="bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700 font-semibold">ห้อง -</span>
+                    <span id="bmi-student-number" class="bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700 font-semibold text-yellow-300">เลขที่ -</span>
+                    <span id="bmi-student-gender-age" class="text-slate-400 font-medium">-</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BMI Result Large Badge -->
+              <div class="text-right">
+                <div class="text-[11px] text-slate-400 font-semibold">ค่าดัชนีมวลกาย (BMI)</div>
+                <div id="bmi-value-display" class="font-pixel text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-0.5">--</div>
+              </div>
+            </div>
+
+            <!-- 4 Quick Metric Tiles -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4">
+              <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 text-center">
+                <div class="text-[10px] text-slate-400 font-semibold">ส่วนสูง (Height)</div>
+                <div id="bmi-metric-height" class="text-base font-bold text-white mt-0.5">-- cm</div>
+              </div>
+              <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 text-center">
+                <div class="text-[10px] text-slate-400 font-semibold">น้ำหนัก (Weight)</div>
+                <div id="bmi-metric-weight" class="text-base font-bold text-white mt-0.5">-- kg</div>
+              </div>
+              <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 text-center">
+                <div class="text-[10px] text-slate-400 font-semibold">เกณฑ์ประเมิน</div>
+                <div id="bmi-metric-status" class="text-xs font-bold text-emerald-400 mt-1 truncate">สมส่วน</div>
+              </div>
+              <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 text-center">
+                <div class="text-[10px] text-slate-400 font-semibold">วัดล่าสุดเมื่อ</div>
+                <div id="bmi-metric-date" class="text-[11px] font-medium text-slate-300 mt-1 truncate">--</div>
+              </div>
+            </div>
+
+            <!-- VISUAL BMI GAUGE BAR (สเกลแถบสีมาตรฐาน 5 ระดับ) -->
+            <div class="my-5 p-4 bg-slate-950/70 rounded-2xl border border-slate-800">
+              <div class="flex justify-between items-center text-xs mb-2">
+                <span class="font-bold text-slate-300 flex items-center gap-1.5">
+                  <span>📊</span> ตำแหน่งดัชนีมวลกายของนักเรียนบนเกณฑ์มาตรฐาน:
+                </span>
+                <span id="bmi-gauge-val-tag" class="font-pixel text-xs text-emerald-400 font-bold">BMI: --</span>
+              </div>
+
+              <!-- Needle / Pointer Indicator Container -->
+              <div class="relative w-full h-5 mb-1">
+                <div id="bmi-gauge-pointer" class="absolute top-0 transition-all duration-500 -translate-x-1/2 flex flex-col items-center" style="left: 35%;">
+                  <span class="text-xs text-yellow-300 font-bold leading-none animate-bounce">▼</span>
+                  <span id="bmi-pointer-text" class="text-[9px] font-bold text-yellow-300 bg-slate-800 px-1.5 py-0.2 rounded border border-yellow-400/50">คุณ</span>
+                </div>
+              </div>
+
+              <!-- 5-Segment Color Gauge Bar -->
+              <div class="w-full h-4 rounded-full overflow-hidden flex shadow-inner">
+                <div class="bg-sky-400 h-full flex-1" title="ผอม (< 18.5)"></div>
+                <div class="bg-emerald-500 h-full flex-[1.2]" title="สมส่วน (18.5 - 22.9)"></div>
+                <div class="bg-amber-400 h-full flex-[0.8]" title="ท้วม (23.0 - 24.9)"></div>
+                <div class="bg-orange-500 h-full flex-[1.2]" title="เริ่มอ้วน (25.0 - 29.9)"></div>
+                <div class="bg-rose-500 h-full flex-1" title="อ้วนมาก (>= 30.0)"></div>
+              </div>
+
+              <!-- Gauge Legend Labels -->
+              <div class="grid grid-cols-5 text-[9px] sm:text-[10px] text-center text-slate-400 font-medium mt-1.5">
+                <span class="text-sky-400">ผอม (&lt;18.5)</span>
+                <span class="text-emerald-400 font-bold">สมส่วน (18.5-22.9)</span>
+                <span class="text-amber-400">ท้วม (23-24.9)</span>
+                <span class="text-orange-400">เริ่มอ้วน (25-29.9)</span>
+                <span class="text-rose-400">อ้วนมาก (&ge;30)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personalized Health & PE Advice -->
+          <div class="p-3.5 bg-slate-800/90 border border-slate-700 rounded-xl mt-2 flex items-start gap-2.5">
+            <span class="text-xl shrink-0">💡</span>
+            <div>
+              <div class="text-xs font-bold text-yellow-300 mb-0.5">ข้อแนะนำสำหรับคุณครูและนักเรียน:</div>
+              <p id="bmi-advice-text" class="text-xs text-slate-300 leading-relaxed">
+                กรุณาเลือกนักเรียนเพื่อดูข้อแนะนำการออกกำลังกายและโภชนาการที่เหมาะสม
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 2: Class Health Overview & Distribution (5 Cols) -->
+        <div class="lg:col-span-5 bg-slate-900/80 rounded-2xl border border-slate-700 p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+              <h3 class="font-bold text-sm text-white flex items-center gap-1.5">
+                <span>📈</span> สถิติสุขภาพทั้งชั้นเรียน (<span id="bmi-class-title">ทุกห้อง</span>)
+              </h3>
+              <span id="bmi-class-total-assessed" class="text-xs text-slate-400 font-mono">วัดแล้ว 0 คน</span>
+            </div>
+
+            <!-- Class Health Breakdown Bars -->
+            <div class="space-y-3.5 my-4">
+              <!-- 1. Normal Weight -->
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-emerald-400 font-bold flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> สมส่วน (น้ำหนักปกติ)
+                  </span>
+                  <span id="class-pct-normal" class="font-mono font-bold text-white">0% (0 คน)</span>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                  <div id="class-bar-normal" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- 2. Underweight -->
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-sky-400 font-bold flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span> ผอม (น้ำหนักน้อยกว่าเกณฑ์)
+                  </span>
+                  <span id="class-pct-underweight" class="font-mono font-bold text-white">0% (0 คน)</span>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                  <div id="class-bar-underweight" class="bg-sky-400 h-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- 3. Overweight / Plump -->
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-amber-400 font-bold flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> ท้วม (น้ำหนักเกินเกณฑ์)
+                  </span>
+                  <span id="class-pct-overweight" class="font-mono font-bold text-white">0% (0 คน)</span>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                  <div id="class-bar-overweight" class="bg-amber-400 h-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- 4. Obese -->
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-rose-400 font-bold flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> เริ่มอ้วน / อ้วนมาก
+                  </span>
+                  <span id="class-pct-obese" class="font-mono font-bold text-white">0% (0 คน)</span>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                  <div id="class-bar-obese" class="bg-rose-500 h-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Classroom PE Health Summary Pill -->
+          <div class="p-3 bg-emerald-950/40 border border-emerald-800/60 rounded-xl mt-3 flex items-center justify-between text-xs text-emerald-300">
+            <span class="font-semibold">อัตรานักเรียนสุขภาพสมส่วน:</span>
+            <span id="class-health-grade" class="font-pixel text-sm font-bold text-emerald-400">--%</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Instructions Collapsible -->
-      <div id="instructions-box" class="hidden mt-3 p-3 bg-slate-900 rounded border border-slate-700 text-xs text-gray-300 space-y-2">
-        <p class="font-bold text-yellow-300">📝 ขั้นตอนติดตั้ง Google Apps Script:</p>
-        <ol class="list-decimal list-inside space-y-1 text-gray-300 text-[11px]">
-          <li>สร้าง Google Sheets ใหม่ขึ้นมา 1 แผ่น</li>
-          <li>ไปที่เมนู <strong>ส่วนขยาย ➔ Apps Script</strong></li>
-          <li>วางโค้ด:
-            <pre class="bg-slate-950 p-2 rounded text-emerald-300 font-mono text-[10px] my-1 overflow-x-auto">function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var d = JSON.parse(e.postData.contents);
-  sheet.appendRow([d.timestamp, d.room, d.studentNumber, d.studentName, d.exerciseId, d.reps, d.targetReps, d.accuracy, d.grade, d.xpEarned]);
-  return ContentService.createTextOutput("OK");
-}</pre>
-          </li>
-          <li>กด <strong>Deploy ➔ New deployment</strong> เลือก <strong>Web App</strong>, Who has access = <strong>Anyone</strong> แล้วนำ URL มาวาง</li>
-        </ol>
+      <!-- Collapsible Detailed Health Records Table -->
+      <div class="border-t border-slate-700 bg-slate-900/40">
+        <div class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-800/40 transition-colors" id="btn-toggle-health-table">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-300">📋 รายชื่อและบันทึกข้อมูลสุขภาพ BMI ทั้งหมดในห้อง</span>
+            <span id="health-table-count" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full border border-slate-700">0 รายการ</span>
+          </div>
+          <span id="health-table-arrow" class="text-xs text-slate-400 font-bold">▼ ขยายดูตาราง</span>
+        </div>
+
+        <div id="health-table-container" class="hidden px-4 pb-4 overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-950/60 text-gray-400 border-b border-slate-800">
+              <tr>
+                <th class="p-2.5">ห้อง</th>
+                <th class="p-2.5 text-center">เลขที่</th>
+                <th class="p-2.5">ชื่อ-นามสกุล</th>
+                <th class="p-2.5 text-center">เพศ</th>
+                <th class="p-2.5 text-center">อายุ</th>
+                <th class="p-2.5 text-right">น้ำหนัก</th>
+                <th class="p-2.5 text-right">ส่วนสูง</th>
+                <th class="p-2.5 text-center">BMI</th>
+                <th class="p-2.5">เกณฑ์การเจริญเติบโต</th>
+                <th class="p-2.5 text-right">วันที่ตรวจ</th>
+              </tr>
+            </thead>
+            <tbody id="bmi-table-tbody" class="divide-y divide-slate-800 text-slate-300">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -471,14 +761,40 @@
 
     function updateSupabaseBadge(isConfigured, isConnected = false) {
       const badge = document.getElementById("supabase-status-badge");
-      if (!badge) return;
+      const cloudPill = document.getElementById("cloud-status-pill");
       if (isConfigured) {
-        badge.textContent = isConnected ? "🟢 เชื่อมต่อ Supabase แล้ว (Realtime)" : "⚡ ตั้งค่า Supabase แล้ว (ออนไลน์)";
-        badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800";
+        if (badge) {
+          badge.textContent = isConnected ? "🟢 เชื่อมต่อ Supabase แล้ว (Realtime)" : "⚡ ตั้งค่า Supabase แล้ว (ออนไลน์)";
+          badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800";
+        }
+        if (cloudPill) {
+          cloudPill.textContent = "🟢 เชื่อมต่อคลาวด์แล้ว";
+          cloudPill.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800";
+        }
       } else {
-        badge.textContent = "⚪ โหมดออฟไลน์ (LocalStorage)";
-        badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-slate-700 text-gray-300";
+        if (badge) {
+          badge.textContent = "⚪ โหมดออฟไลน์ (LocalStorage)";
+          badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-slate-700 text-gray-300";
+        }
+        if (cloudPill) {
+          cloudPill.textContent = "⚪ โหมดออฟไลน์";
+          cloudPill.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-700 text-gray-300";
+        }
       }
+    }
+
+    // Toggle Collapsible Cloud Settings
+    const btnToggleCloud = document.getElementById("btn-toggle-cloud-settings");
+    const cloudContent = document.getElementById("cloud-settings-content");
+    const cloudToggleText = document.getElementById("cloud-toggle-text");
+    const cloudToggleArrow = document.getElementById("cloud-toggle-arrow");
+
+    if (btnToggleCloud && cloudContent) {
+      btnToggleCloud.addEventListener("click", () => {
+        const isHidden = cloudContent.classList.toggle("hidden");
+        if (cloudToggleText) cloudToggleText.textContent = isHidden ? "⚙️ คลิกเพื่อตั้งค่า" : "▲ ซ่อนแผงตั้งค่า";
+        if (cloudToggleArrow) cloudToggleArrow.textContent = isHidden ? "▼" : "▲";
+      });
     }
 
     const savedCreds = supabase.getCredentials();
@@ -694,6 +1010,10 @@
           openSnapshotModal(src, name, info);
         });
       });
+
+      if (typeof updateHealthStudentList === "function") {
+        updateHealthStudentList();
+      }
     }
 
     // --- REALTIME LISTENER FOR ADMIN ---
@@ -1103,9 +1423,293 @@
       btnTogglePwd.textContent = isPwd ? "🙈" : "👁️";
     });
 
+    // ==========================================
+    // 🏥 STUDENT HEALTH & BMI ANALYTICS LOGIC
+    // ==========================================
+    let currentHealthFilterRoom = "ALL";
+    let selectedStudentHealthId = null;
+
+    function initHealthBMIDashboard() {
+      const filterRoomSelect = document.getElementById("bmi-filter-room");
+      const currentRooms = getDefaultRooms();
+      const allRecords = storage.getAllHealthRecords();
+      const recordRooms = allRecords.map(r => r.room).filter(Boolean);
+      const uniqueRooms = Array.from(new Set([...currentRooms, ...recordRooms]));
+
+      if (filterRoomSelect) {
+        filterRoomSelect.innerHTML = `<option value="ALL">ทุกห้องเรียน (All)</option>` +
+          uniqueRooms.map(r => `<option value="${r}">${r}</option>`).join("");
+        filterRoomSelect.value = currentHealthFilterRoom;
+
+        filterRoomSelect.addEventListener("change", (e) => {
+          currentHealthFilterRoom = e.target.value;
+          updateHealthStudentList();
+        });
+      }
+
+      const studentSelect = document.getElementById("bmi-select-student");
+      if (studentSelect) {
+        studentSelect.addEventListener("change", (e) => {
+          selectedStudentHealthId = e.target.value;
+          renderSelectedStudentBMI();
+        });
+      }
+
+      // Collapsible table toggle
+      const btnToggleTable = document.getElementById("btn-toggle-health-table");
+      const tableContainer = document.getElementById("health-table-container");
+      const tableArrow = document.getElementById("health-table-arrow");
+      if (btnToggleTable && tableContainer) {
+        btnToggleTable.addEventListener("click", () => {
+          const isHidden = tableContainer.classList.toggle("hidden");
+          if (tableArrow) tableArrow.textContent = isHidden ? "▼ ขยายดูตาราง" : "▲ ซ่อนตาราง";
+        });
+      }
+
+      // Export CSV
+      const btnExportHealth = document.getElementById("btn-export-health-csv");
+      if (btnExportHealth) {
+        btnExportHealth.addEventListener("click", () => {
+          exportHealthRecordsToCSV();
+        });
+      }
+
+      updateHealthStudentList();
+    }
+
+    function updateHealthStudentList() {
+      const studentSelect = document.getElementById("bmi-select-student");
+      const allRecords = storage.getAllHealthRecords();
+      const filtered = currentHealthFilterRoom === "ALL" 
+        ? allRecords 
+        : allRecords.filter(r => r.room === currentHealthFilterRoom);
+
+      filtered.sort((a, b) => {
+        if (a.room !== b.room) return (a.room || '').localeCompare(b.room || '');
+        return (parseInt(a.studentNumber, 10) || 0) - (parseInt(b.studentNumber, 10) || 0);
+      });
+
+      if (studentSelect) {
+        if (filtered.length === 0) {
+          studentSelect.innerHTML = `<option value="">ไม่มีข้อมูลนักเรียนในห้องนี้</option>`;
+          selectedStudentHealthId = null;
+        } else {
+          studentSelect.innerHTML = filtered.map(r => `
+            <option value="${r.studentId}">เลขที่ ${r.studentNumber} - ${r.name} (${r.room})</option>
+          `).join("");
+
+          if (!selectedStudentHealthId || !filtered.some(r => r.studentId === selectedStudentHealthId)) {
+            selectedStudentHealthId = filtered[0].studentId;
+          }
+          studentSelect.value = selectedStudentHealthId;
+        }
+      }
+
+      renderSelectedStudentBMI();
+      renderClassHealthBreakdown(filtered);
+      renderHealthRecordsTable(filtered);
+    }
+
+    function renderSelectedStudentBMI() {
+      const allRecords = storage.getAllHealthRecords();
+      const record = allRecords.find(r => r.studentId === selectedStudentHealthId);
+
+      const avatarEl = document.getElementById("bmi-avatar-icon");
+      const nameEl = document.getElementById("bmi-student-name");
+      const roomEl = document.getElementById("bmi-student-room");
+      const numEl = document.getElementById("bmi-student-number");
+      const genderAgeEl = document.getElementById("bmi-student-gender-age");
+      const valEl = document.getElementById("bmi-value-display");
+      const heightEl = document.getElementById("bmi-metric-height");
+      const weightEl = document.getElementById("bmi-metric-weight");
+      const statusEl = document.getElementById("bmi-metric-status");
+      const dateEl = document.getElementById("bmi-metric-date");
+      const gaugeValTag = document.getElementById("bmi-gauge-val-tag");
+      const pointerEl = document.getElementById("bmi-gauge-pointer");
+      const pointerText = document.getElementById("bmi-pointer-text");
+      const adviceEl = document.getElementById("bmi-advice-text");
+
+      if (!record) {
+        if (nameEl) nameEl.textContent = "ยังไม่มีข้อมูลนักเรียนที่เลือก";
+        if (valEl) valEl.textContent = "--";
+        if (heightEl) heightEl.textContent = "-- cm";
+        if (weightEl) weightEl.textContent = "-- kg";
+        if (statusEl) statusEl.textContent = "-";
+        if (dateEl) dateEl.textContent = "-";
+        if (gaugeValTag) gaugeValTag.textContent = "BMI: --";
+        if (adviceEl) adviceEl.textContent = "นักเรียนคนนี้ยังไม่ได้ทำการชั่งน้ำหนักและวัดส่วนสูงที่ห้องตรวจสุขภาพ";
+        return;
+      }
+
+      const isFemale = record.gender === "female";
+      if (avatarEl) avatarEl.textContent = isFemale ? "👧" : "👦";
+      if (nameEl) nameEl.textContent = record.name;
+      if (roomEl) roomEl.textContent = record.room || "ห้อง 1";
+      if (numEl) numEl.textContent = `เลขที่ ${record.studentNumber || '-'}`;
+      if (genderAgeEl) genderAgeEl.textContent = `เพศ${isFemale ? 'หญิง' : 'ชาย'} • อายุ ${record.age || 10} ปี`;
+
+      const bmi = record.bmi || storage.calculateBMI(record.weight, record.height);
+      const cat = storage.getBMICategory(bmi);
+
+      if (valEl) {
+        valEl.textContent = bmi;
+        valEl.className = `font-pixel text-2xl sm:text-3xl font-extrabold ${cat.color} mt-0.5`;
+      }
+      if (heightEl) heightEl.textContent = `${record.height} cm`;
+      if (weightEl) weightEl.textContent = `${record.weight} kg`;
+      if (statusEl) {
+        statusEl.textContent = cat.category.split(" ")[0];
+        statusEl.className = `text-xs font-bold ${cat.color} mt-1 truncate`;
+      }
+      if (dateEl) dateEl.textContent = record.timestamp || "-";
+      if (gaugeValTag) gaugeValTag.textContent = `BMI: ${bmi}`;
+
+      // Calculate Pointer Position on Scale:
+      const minBmi = 12;
+      const maxBmi = 34;
+      const clampedBmi = Math.max(minBmi, Math.min(maxBmi, bmi));
+      const percent = Math.round(((clampedBmi - minBmi) / (maxBmi - minBmi)) * 90) + 5;
+      if (pointerEl) {
+        pointerEl.style.left = `${percent}%`;
+      }
+      if (pointerText) {
+        pointerText.textContent = `${bmi}`;
+      }
+
+      if (adviceEl) {
+        adviceEl.textContent = cat.advice;
+      }
+    }
+
+    function renderClassHealthBreakdown(records) {
+      const classTitleEl = document.getElementById("bmi-class-title");
+      const totalEl = document.getElementById("bmi-class-total-assessed");
+      const gradeEl = document.getElementById("class-health-grade");
+
+      if (classTitleEl) classTitleEl.textContent = currentHealthFilterRoom === "ALL" ? "ทุกห้องเรียน" : currentHealthFilterRoom;
+      if (totalEl) totalEl.textContent = `วัดแล้ว ${records.length} คน`;
+
+      if (records.length === 0) {
+        if (gradeEl) gradeEl.textContent = "0%";
+        document.getElementById("class-pct-normal").textContent = "0% (0 คน)";
+        document.getElementById("class-bar-normal").style.width = "0%";
+        document.getElementById("class-pct-underweight").textContent = "0% (0 คน)";
+        document.getElementById("class-bar-underweight").style.width = "0%";
+        document.getElementById("class-pct-overweight").textContent = "0% (0 คน)";
+        document.getElementById("class-bar-overweight").style.width = "0%";
+        document.getElementById("class-pct-obese").textContent = "0% (0 คน)";
+        document.getElementById("class-bar-obese").style.width = "0%";
+        return;
+      }
+
+      let normalCount = 0;
+      let underweightCount = 0;
+      let overweightCount = 0;
+      let obeseCount = 0;
+
+      records.forEach(r => {
+        const bmi = r.bmi || storage.calculateBMI(r.weight, r.height);
+        if (bmi < 18.5) underweightCount++;
+        else if (bmi <= 22.9) normalCount++;
+        else if (bmi <= 24.9) overweightCount++;
+        else obeseCount++;
+      });
+
+      const total = records.length;
+      const normalPct = Math.round((normalCount / total) * 100);
+      const underPct = Math.round((underweightCount / total) * 100);
+      const overPct = Math.round((overweightCount / total) * 100);
+      const obesePct = Math.round((obeseCount / total) * 100);
+
+      document.getElementById("class-pct-normal").textContent = `${normalPct}% (${normalCount} คน)`;
+      document.getElementById("class-bar-normal").style.width = `${normalPct}%`;
+
+      document.getElementById("class-pct-underweight").textContent = `${underPct}% (${underweightCount} คน)`;
+      document.getElementById("class-bar-underweight").style.width = `${underPct}%`;
+
+      document.getElementById("class-pct-overweight").textContent = `${overPct}% (${overweightCount} คน)`;
+      document.getElementById("class-bar-overweight").style.width = `${overPct}%`;
+
+      document.getElementById("class-pct-obese").textContent = `${obesePct}% (${obeseCount} คน)`;
+      document.getElementById("class-bar-obese").style.width = `${obesePct}%`;
+
+      if (gradeEl) gradeEl.textContent = `${normalPct}%`;
+    }
+
+    function renderHealthRecordsTable(records) {
+      const tbody = document.getElementById("bmi-table-tbody");
+      const countEl = document.getElementById("health-table-count");
+      if (!tbody) return;
+
+      if (countEl) countEl.textContent = `${records.length} รายการ`;
+
+      if (records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-slate-500">ไม่มีข้อมูลบันทึกสุขภาพในตัวเลือกนี้</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = records.map(r => {
+        const bmi = r.bmi || storage.calculateBMI(r.weight, r.height);
+        const cat = storage.getBMICategory(bmi);
+        return `
+          <tr class="hover:bg-slate-800/60 transition-colors">
+            <td class="p-2.5 font-semibold text-slate-200">${r.room || '-'}</td>
+            <td class="p-2.5 text-center font-mono font-bold text-yellow-300">${r.studentNumber || '-'}</td>
+            <td class="p-2.5 font-medium text-white">${r.name}</td>
+            <td class="p-2.5 text-center">${r.gender === 'female' ? '👧 หญิง' : '👦 ชาย'}</td>
+            <td class="p-2.5 text-center">${r.age || '-'} ปี</td>
+            <td class="p-2.5 text-right font-mono font-bold text-white">${r.weight || '-'} kg</td>
+            <td class="p-2.5 text-right font-mono font-bold text-white">${r.height || '-'} cm</td>
+            <td class="p-2.5 text-center font-pixel font-bold ${cat.color}">${bmi}</td>
+            <td class="p-2.5">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${cat.badge}">${r.classification || cat.category}</span>
+            </td>
+            <td class="p-2.5 text-right text-[10px] text-slate-400 font-mono">${r.timestamp || '-'}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function exportHealthRecordsToCSV() {
+      const allRecords = storage.getAllHealthRecords();
+      const records = currentHealthFilterRoom === "ALL" 
+        ? allRecords 
+        : allRecords.filter(r => r.room === currentHealthFilterRoom);
+
+      if (records.length === 0) {
+        alert("ไม่มีข้อมูลสุขภาพสำหรับส่งออก");
+        return;
+      }
+
+      const headers = ["วันเวลาที่ตรวจ", "ห้อง", "เลขที่", "ชื่อ-นามสกุล", "เพศ", "อายุ (ปี)", "น้ำหนัก (กก.)", "ส่วนสูง (ซม.)", "ค่า BMI", "เกณฑ์การเจริญเติบโต"];
+      const rows = records.map(r => [
+        `"${r.timestamp || '-'}"`,
+        `"${r.room || '-'}"`,
+        `"${r.studentNumber || '-'}"`,
+        `"${r.name || '-'}"`,
+        `"${r.gender === 'female' ? 'หญิง' : 'ชาย'}"`,
+        r.age || 10,
+        r.weight || 0,
+        r.height || 0,
+        r.bmi || 0,
+        `"${r.classification || '-'}"`
+      ]);
+
+      const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `KU_PE_Student_Health_BMI_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     // Check Auth State & Initialize Dashboard
     async function startAdminApp() {
       initRoomManagement();
+      initHealthBMIDashboard();
       renderAdminDashboard();
       await syncExercisesFromServer();
       renderPresets();
