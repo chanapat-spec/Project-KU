@@ -745,5 +745,172 @@ export const storage = {
       console.warn("Health cloud sync failed:", err);
       return false;
     }
+  },
+
+  // ==========================================
+  // BULK SYNC TO GOOGLE SHEETS (ONE-CLICK EXPORT)
+  // ==========================================
+  async syncAllHealthRecordsToGoogleSheets(roomFilter = "ALL", onProgress = null) {
+    const webhookUrl = this.getCloudWebhook();
+    if (!webhookUrl) {
+      throw new Error("ยังไม่ได้ระบุ Google Sheets Webhook URL");
+    }
+
+    // 1. Fetch fresh records from Supabase / server cache
+    let records = await this.syncHealthRecordsFromSupabase(roomFilter);
+    if (!records || records.length === 0) {
+      records = this.getAllHealthRecords();
+      if (roomFilter !== "ALL") {
+        records = records.filter(r => r.room === roomFilter);
+      }
+    }
+
+    // 2. Filter out demo seeded records if real records exist
+    const isSeeded = (id) => ["ด.ญ. พลอย", "ด.ช. วิน", "ด.ช. เบส", "ด.ญ. มายด์"].some(n => id?.includes(n));
+    const realRecords = records.filter(r => !isSeeded(r.id));
+    const finalRecords = realRecords.length > 0 ? realRecords : records;
+
+    if (finalRecords.length === 0) {
+      return { total: 0, success: 0, failed: 0 };
+    }
+
+    // Sort by room, then student number (asc)
+    finalRecords.sort((a, b) => {
+      const roomComp = (a.room || "").localeCompare(b.room || "");
+      if (roomComp !== 0) return roomComp;
+      return (parseInt(a.studentNumber, 10) || 0) - (parseInt(b.studentNumber, 10) || 0);
+    });
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < finalRecords.length; i++) {
+      const r = finalRecords[i];
+      if (onProgress) {
+        onProgress(i + 1, finalRecords.length, r);
+      }
+
+      const payload = {
+        type: "health_bmi",
+        timestamp: r.timestamp || new Date().toLocaleString("th-TH"),
+        room: r.room || "-",
+        studentNumber: r.studentNumber || "-",
+        studentName: r.name || r.studentName || "-",
+        gender: r.gender === "female" ? "หญิง" : (r.gender === "male" ? "ชาย" : (r.gender || "-")),
+        age: r.age || 10,
+        weight: r.weight,
+        height: r.height,
+        bmi: r.bmi,
+        classification: r.classification
+      };
+
+      try {
+        await fetch(webhookUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        successCount++;
+      } catch (err) {
+        console.warn("Failed sending health record to Google Sheets:", r.name, err);
+        failCount++;
+      }
+
+      // Small throttle between requests (120ms) to ensure smooth delivery
+      if (i < finalRecords.length - 1) {
+        await new Promise(res => setTimeout(res, 120));
+      }
+    }
+
+    return { total: finalRecords.length, success: successCount, failed: failCount };
+  },
+
+  async syncAllScoresToGoogleSheets(roomFilter = "ALL", onProgress = null) {
+    const webhookUrl = this.getCloudWebhook();
+    if (!webhookUrl) {
+      throw new Error("ยังไม่ได้ระบุ Google Sheets Webhook URL");
+    }
+
+    let records = [];
+    if (supabase.isConfigured()) {
+      try {
+        const cloudScores = await supabase.fetchAllScores(roomFilter);
+        if (cloudScores && cloudScores.length > 0) {
+          records = cloudScores.map(c => ({
+            timestamp: c.created_at,
+            room: c.room,
+            studentNumber: c.student_number,
+            studentName: c.student_name,
+            exerciseId: c.exercise_id,
+            reps: c.reps,
+            targetReps: c.target_reps,
+            accuracy: c.accuracy,
+            grade: c.grade,
+            xpEarned: c.xp_earned,
+            durationSeconds: c.duration_seconds,
+            snapshotUrl: c.snapshot_url
+          }));
+        }
+      } catch (err) {
+        console.warn("Supabase fetch fallback:", err);
+      }
+    }
+
+    if (records.length === 0) {
+      records = this.getAllScoreRecords();
+      if (roomFilter !== "ALL") {
+        records = records.filter(r => r.room === roomFilter);
+      }
+    }
+
+    if (records.length === 0) {
+      return { total: 0, success: 0, failed: 0 };
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < records.length; i++) {
+      const r = records[i];
+      if (onProgress) {
+        onProgress(i + 1, records.length, r);
+      }
+
+      const payload = {
+        type: "score",
+        timestamp: r.timestamp || new Date().toLocaleString("th-TH"),
+        room: r.room || "-",
+        studentNumber: r.studentNumber || "-",
+        studentName: r.studentName || "-",
+        exerciseId: r.exerciseId || "-",
+        reps: r.reps || 0,
+        targetReps: r.targetReps || 0,
+        accuracy: r.accuracy || 100,
+        grade: r.grade || "A",
+        xpEarned: r.xpEarned || 0,
+        durationSeconds: r.durationSeconds || 0,
+        snapshotUrl: r.snapshotUrl || ""
+      };
+
+      try {
+        await fetch(webhookUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        successCount++;
+      } catch (err) {
+        console.warn("Failed sending score record to Google Sheets:", r.studentName, err);
+        failCount++;
+      }
+
+      if (i < records.length - 1) {
+        await new Promise(res => setTimeout(res, 120));
+      }
+    }
+
+    return { total: records.length, success: successCount, failed: failCount };
   }
 };

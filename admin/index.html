@@ -306,8 +306,14 @@ function doPost(e) {
             <span>ซิงค์ข้อมูล</span>
           </button>
 
+          <!-- 1-Click Sync ALL Health & BMI to Google Sheets -->
+          <button type="button" id="btn-sync-all-health-sheets" class="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer ring-2 ring-emerald-400/40" title="ส่งออกข้อมูลสุขภาพและค่า BMI ของนักเรียนทุกคนที่ส่งแบบบันทึกมาแล้วไปยัง Google Sheets ในคลิกเดียว">
+            <span>📤</span>
+            <span id="label-sync-all-health">ซิงค์เข้า Google Sheet ทั้งหมด</span>
+          </button>
+
           <!-- Export Health Data Button -->
-          <button type="button" id="btn-export-health-csv" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1 cursor-pointer" title="ส่งออก CSV ข้อมูลสุขภาพ">
+          <button type="button" id="btn-export-health-csv" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 shadow transition-all flex items-center gap-1 cursor-pointer" title="ส่งออก CSV ข้อมูลสุขภาพ">
             <span>📥</span>
             <span class="hidden sm:inline">Export CSV</span>
           </button>
@@ -315,7 +321,7 @@ function doPost(e) {
           <!-- Quick Test Webhook Button -->
           <button type="button" id="btn-quick-test-webhook" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1.5 cursor-pointer ring-2 ring-indigo-400/40" title="ทดสอบส่งข้อมูลเข้า Google Sheets">
             <span>🧪</span>
-            <span>ทดสอบส่งเข้าชีต</span>
+            <span>ทดสอบชีต</span>
           </button>
         </div>
       </div>
@@ -498,7 +504,13 @@ function doPost(e) {
             <span class="text-xs font-bold text-slate-300">📋 รายชื่อและบันทึกข้อมูลสุขภาพ BMI ทั้งหมดในห้อง</span>
             <span id="health-table-count" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full border border-slate-700">0 รายการ</span>
           </div>
-          <span id="health-table-arrow" class="text-xs text-slate-400 font-bold">▼ ขยายดูตาราง</span>
+          <div class="flex items-center gap-2">
+            <button type="button" id="btn-sync-table-health-sheets" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold rounded-lg shadow flex items-center gap-1 cursor-pointer transition-all" title="ส่งออกข้อมูลตารางนี้เข้า Google Sheets">
+              <span>📤</span>
+              <span>ส่งข้อมูลตารางนี้เข้า Google Sheet</span>
+            </button>
+            <span id="health-table-arrow" class="text-xs text-slate-400 font-bold">▼ ขยายดูตาราง</span>
+          </div>
         </div>
 
         <div id="health-table-container" class="hidden px-4 pb-4 overflow-x-auto">
@@ -532,12 +544,18 @@ function doPost(e) {
           <span>🏆</span> ตารางคะแนนนักเรียน & หลักฐานการฝึกซ้อม
         </h2>
 
-        <!-- Room Filter -->
-        <div class="flex items-center gap-2 text-xs">
-          <label class="text-gray-400">กรองตามห้อง:</label>
-          <select id="filter-room" class="bg-slate-900 border border-slate-600 rounded px-3 py-1.5 text-white">
-            <option value="ALL">ทุกห้องเรียน (All)</option>
-          </select>
+        <!-- Room Filter & Actions -->
+        <div class="flex items-center gap-2 text-xs flex-wrap">
+          <div class="flex items-center gap-1.5">
+            <label class="text-gray-400">กรองตามห้อง:</label>
+            <select id="filter-room" class="bg-slate-900 border border-slate-600 rounded px-3 py-1.5 text-white">
+              <option value="ALL">ทุกห้องเรียน (All)</option>
+            </select>
+          </div>
+          <button type="button" id="btn-sync-all-scores-sheets" class="px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs rounded-lg shadow flex items-center gap-1.5 cursor-pointer" title="ส่งออกคะแนนฝึกซ้อมของนักเรียนทุกคนเข้า Google Sheets">
+            <span>📤</span>
+            <span id="label-sync-scores">ซิงค์คะแนนเข้า Google Sheet</span>
+          </button>
         </div>
       </div>
 
@@ -1587,6 +1605,57 @@ function doPost(e) {
       }
     });
 
+    const btnSyncScoresSheets = document.getElementById("btn-sync-all-scores-sheets");
+    if (btnSyncScoresSheets) {
+      btnSyncScoresSheets.addEventListener("click", async () => {
+        const webhookUrl = storage.getCloudWebhook();
+        if (!webhookUrl) {
+          alert("⚠️ ยังไม่ได้ระบุ Google Sheets Webhook URL\nกรุณากรอก Webhook URL ในส่วน 'ตั้งค่าการเชื่อมต่อ Google Sheets' ด้านบนก่อนครับ");
+          const cloudContent = document.getElementById("cloud-settings-content");
+          if (cloudContent && cloudContent.classList.contains("hidden")) {
+            cloudContent.classList.remove("hidden");
+          }
+          const webhookBox = document.getElementById("input-webhook-url");
+          if (webhookBox) {
+            webhookBox.scrollIntoView({ behavior: "smooth", block: "center" });
+            webhookBox.focus();
+            webhookBox.classList.add("ring-4", "ring-indigo-400");
+            setTimeout(() => webhookBox.classList.remove("ring-4", "ring-indigo-400"), 2500);
+          }
+          return;
+        }
+
+        const roomFilter = document.getElementById("filter-room")?.value || "ALL";
+        const roomText = roomFilter === "ALL" ? "ทุกห้องเรียน" : roomFilter;
+
+        if (!confirm(`ยืนยันการส่งออกคะแนนฝึกซ้อมของนักเรียน (${roomText}) ทั้งหมดไปยัง Google Sheets แผ่นงาน 'คะแนนการฝึกซ้อม' หรือไม่?`)) {
+          return;
+        }
+
+        const label = document.getElementById("label-sync-scores");
+        btnSyncScoresSheets.disabled = true;
+        btnSyncScoresSheets.classList.add("opacity-80");
+
+        try {
+          const res = await storage.syncAllScoresToGoogleSheets(roomFilter, (curr, total) => {
+            if (label) label.textContent = `กำลังส่ง (${curr}/${total})...`;
+          });
+
+          if (res.total === 0) {
+            alert(`⚠️ ยังไม่พบบันทึกคะแนนของนักเรียน (${roomText}) ที่จะส่งออก`);
+          } else {
+            alert(`🎉 ส่งออกคะแนนการฝึกซ้อมสำเร็จแล้ว!\n\n• จำนวนรายการที่ส่ง: ${res.success} / ${res.total} รายการ\n• บันทึกลงแผ่นงาน: "คะแนนการฝึกซ้อม"\n• กลุ่ม: ${roomText}`);
+          }
+        } catch (err) {
+          alert("❌ เกิดข้อผิดพลาด: " + err.message);
+        } finally {
+          btnSyncScoresSheets.disabled = false;
+          btnSyncScoresSheets.classList.remove("opacity-80");
+          if (label) label.textContent = "ซิงค์คะแนนเข้า Google Sheet";
+        }
+      });
+    }
+
     const toggleBtn = document.getElementById("btn-toggle-add-exercise");
     const addForm = document.getElementById("form-add-exercise");
     const cancelAddBtn = document.getElementById("btn-cancel-add-exercise");
@@ -1787,6 +1856,105 @@ function doPost(e) {
           const isHidden = tableContainer.classList.toggle("hidden");
           if (tableArrow) tableArrow.textContent = isHidden ? "▼ ขยายดูตาราง" : "▲ ซ่อนตาราง";
         });
+      }
+
+      // 1-Click Sync ALL Health & BMI to Google Sheets
+      const handleSyncAllHealthToSheets = async () => {
+        const webhookUrl = storage.getCloudWebhook();
+        if (!webhookUrl) {
+          alert("⚠️ ยังไม่ได้ระบุ Google Sheets Webhook URL\nกรุณากรอก Webhook URL ในส่วน 'ตั้งค่าการเชื่อมต่อ Google Sheets' ด้านบนก่อนครับ");
+          const cloudContent = document.getElementById("cloud-settings-content");
+          if (cloudContent && cloudContent.classList.contains("hidden")) {
+            cloudContent.classList.remove("hidden");
+          }
+          const webhookBox = document.getElementById("input-webhook-url");
+          if (webhookBox) {
+            webhookBox.scrollIntoView({ behavior: "smooth", block: "center" });
+            webhookBox.focus();
+            webhookBox.classList.add("ring-4", "ring-indigo-400");
+            setTimeout(() => webhookBox.classList.remove("ring-4", "ring-indigo-400"), 2500);
+          }
+          return;
+        }
+
+        const currentRoom = currentHealthFilterRoom;
+        const roomText = currentRoom === "ALL" ? "ทุกห้องเรียน" : currentRoom;
+
+        // 1. Fetch latest from Supabase/Server to ensure we have every student who submitted
+        const syncBadge = document.getElementById("health-sync-indicator");
+        if (syncBadge) {
+          syncBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-spin"></span><span>กำลังตรวจสอบข้อมูล...</span>`;
+        }
+
+        let records = await storage.syncHealthRecordsFromSupabase(currentRoom);
+        if (!records || records.length === 0) {
+          records = storage.getAllHealthRecords();
+          if (currentRoom !== "ALL") {
+            records = records.filter(r => r.room === currentRoom);
+          }
+        }
+
+        // Filter out demo seeders if real student records are present
+        const isSeeded = (id) => ["ด.ญ. พลอย", "ด.ช. วิน", "ด.ช. เบส", "ด.ญ. มายด์"].some(n => id?.includes(n));
+        const realRecords = (records || []).filter(r => !isSeeded(r.id));
+        const recordsToSend = realRecords.length > 0 ? realRecords : (records || []);
+
+        if (recordsToSend.length === 0) {
+          alert(`⚠️ ยังไม่พบข้อมูลการบันทึกสุขภาพ & BMI ของนักเรียน (${roomText}) ที่จะส่งออก`);
+          await updateHealthStudentList();
+          return;
+        }
+
+        const confirmMsg = `ยืนยันการส่งออกข้อมูลสุขภาพ & BMI ของนักเรียนทั้งหมดจำนวน ${recordsToSend.length} คน (${roomText})\nไปยัง Google Sheets แผ่นงาน "ข้อมูลสุขภาพ_BMI" หรือไม่?`;
+        if (!confirm(confirmMsg)) {
+          await updateHealthStudentList();
+          return;
+        }
+
+        const btn = document.getElementById("btn-sync-all-health-sheets");
+        const label = document.getElementById("label-sync-all-health");
+        const btnTable = document.getElementById("btn-sync-table-health-sheets");
+
+        if (btn) {
+          btn.disabled = true;
+          btn.classList.add("opacity-80");
+        }
+        if (btnTable) btnTable.disabled = true;
+
+        try {
+          const res = await storage.syncAllHealthRecordsToGoogleSheets(currentRoom, (curr, total, r) => {
+            if (label) label.textContent = `กำลังส่ง (${curr}/${total})...`;
+            if (btnTable) btnTable.innerHTML = `<span>⏳</span> <span>ส่ง (${curr}/${total})</span>`;
+          });
+
+          alert(`🎉 ส่งออกข้อมูลสุขภาพ & BMI ของนักเรียนเข้า Google Sheets เรียบร้อยแล้ว!\n\n` +
+                `• จำนวนนักเรียนที่ส่ง: ${res.success} / ${res.total} คน\n` +
+                `• บันทึกลงแผ่นงาน: "ข้อมูลสุขภาพ_BMI"\n` +
+                `• กลุ่ม: ${roomText}\n\n` +
+                `คุณครูสามารถเปิดดูใน Google Sheets ได้ทันทีครับ`);
+        } catch (err) {
+          alert("❌ เกิดข้อผิดพลาดในการส่งข้อมูลเข้าชีต: " + err.message);
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.classList.remove("opacity-80");
+            if (label) label.textContent = "ซิงค์เข้า Google Sheet ทั้งหมด";
+          }
+          if (btnTable) {
+            btnTable.disabled = false;
+            btnTable.innerHTML = `<span>📤</span> <span>ส่งข้อมูลตารางนี้เข้า Google Sheet</span>`;
+          }
+          await updateHealthStudentList();
+        }
+      };
+
+      const btnSyncAllHealth = document.getElementById("btn-sync-all-health-sheets");
+      if (btnSyncAllHealth) {
+        btnSyncAllHealth.addEventListener("click", handleSyncAllHealthToSheets);
+      }
+      const btnSyncTableHealth = document.getElementById("btn-sync-table-health-sheets");
+      if (btnSyncTableHealth) {
+        btnSyncTableHealth.addEventListener("click", handleSyncAllHealthToSheets);
       }
 
       // Export CSV
